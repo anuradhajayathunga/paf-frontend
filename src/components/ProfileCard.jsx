@@ -44,7 +44,7 @@ const ProfileCard = () => {
         </div>
 
         {/* Profile Link */}
-        <Link to="/profile">
+        <Link to="/profile/:id">
           <button className="mt-2 bg-blue-500 hover:bg-blue-600 transition text-white text-xs px-4 py-1.5 rounded-md">
             My Profile
           </button>

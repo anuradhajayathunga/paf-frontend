@@ -1,18 +1,18 @@
 import Feed from "../../components/Feed";
-import LeftMenu from "../../components/LeftMenu";
-import RightMenu from "../../components/RightMenu";
+import LeftMenu from "../../components/LeftMenu/LeftMenu";
+import RightMenu from "../../components/RightMenu/RightMenu";
 import React from "react";
 
 const ProfilePage = () => {
   return (
-    <div className="flex flex-col lg:flex-row gap-4 pt-4 px-4 max-w-[1400px] mx-auto">
+    <div className="flex flex-col lg:flex-row gap-4 pt-4 px-4  mx-auto">
       {/* Left Sidebar */}
-      <aside className="hidden xl:block w-[20%]">
-        <LeftMenu type="profile" />
+      <aside className="hidden xl:block w-[10%]">
+        {/* <LeftMenu type="profile" /> */}
       </aside>
 
       {/* Center Content */}
-      <main className="w-full lg:w-[70%] xl:w-[50%] flex flex-col gap-6">
+      <main className="w-full lg:w-[70%] xl:w-[70%] flex flex-col gap-6">
         {/* Profile Header */}
         <section className="relative bg-transparent rounded-xl  overflow-hidden">
           <div className="w-full h-56 relative">

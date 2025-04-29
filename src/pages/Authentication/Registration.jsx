@@ -1,6 +1,8 @@
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
@@ -13,11 +15,12 @@ const validationSchema = Yup.object({
   // lname: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters.")
+    .min(4, "Password must be at least 4 characters.")
     .required("Password is required"),
 });
 
 const Registration = () => {
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -28,100 +31,158 @@ const Registration = () => {
 
   return (
     <>
+      <h2 className="font-bold font-chivo text-[40px] leading-[30px] md:text-heading-3 mb-[50px]">
+        Let's join us
+      </h2>
+      <button type="button">
+        <div className="flex items-center z-10 relative transition-all duration-200 group py-[13px] md:px-[120px] px-[80px] rounded-md bg-white text-gray-500 hover:text-gray-900 flex-row-reverse w-fit mb-[30px]">
+          <span className="block text-inherit w-full h-full rounded-md text-md font-chivo font-semibold">
+            Sign Up with Google
+          </span>
+          <img
+            className="mr-5"
+            src="assets/images/icons/Icon-google.svg"
+            alt="google icon"
+          />
+        </div>
+      </button>
+      <div className="flex items-center justify-center gap-[7px] mb-[25px]">
+        <div className="bg-gray-300 w-[50px] h-[2px]"></div>
+        <p className="text-text text-gray-500">Or, sign up with email</p>
+        <div className="bg-gray-300 w-[50px] h-[2px]"></div>
+      </div>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        <Form className="flex flex-col space-y-5">
-          <div className="flex flex-col space-y-5">
-            <h1 className="text-2xl font-bold">Signup</h1>
-            <p className="text-sm text-gray-500">
-              Welcome! Please enter your details to create an account.
-            </p>
-          </div>
-          <div className="flex flex-col space-y-5">
-            <div>
-              <Field
-                as={TextField}
-                type="text"
-                name="fname"
-                placeholder="First Name"
-                variant="outlined"
-                fullWidth
-              />
-              <ErrorMessage
-                name="fname"
-                component="div"
-                className="text-red-500 text-sm"
-              />
+        {({ isSubmitting }) => (
+          <Form className="bg-white w-full p-8 shadow-3 rounded-[6px] md:p-12">
+            <div className="">
+              <div className="relative mb-6">
+                <Field
+                  as={TextField}
+                  type="text"
+                  name="fname"
+                  placeholder="First Name"
+                  variant="outlined"
+                  fullWidth
+                  className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
+                />
+                <ErrorMessage
+                  name="fname"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+              <div className="relative mb-6">
+                <Field
+                  as={TextField}
+                  type="text"
+                  name="lname"
+                  placeholder="Last Name"
+                  variant="outlined"
+                  fullWidth
+                  className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
+                />
+                <ErrorMessage
+                  name="lname"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+              <div className="relative mb-6">
+                <Field
+                  as={TextField}
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  variant="outlined"
+                  fullWidth
+                  className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
+                />
+                <ErrorMessage
+                  name="email"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+              <div className="relative mb-6">
+                <Field
+                  as={TextField}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  variant="outlined"
+                  fullWidth
+                  className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-[12px] transform -translate-y-1/2 text-gray-500 hover:text-blue-900"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
+                </button>
+              </div>
+              <div className="relative mb-6">
+                <Field
+                  as={TextField}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  placeholder="Password"
+                  variant="outlined"
+                  fullWidth
+                  className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
+                />
+                <ErrorMessage
+                  name="password"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+                <button
+                  type="button"
+                  className="absolute top-1/2 right-[12px] transform -translate-y-1/2 text-gray-500 hover:text-blue-900"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <VisibilityOffIcon fontSize="small" />
+                  ) : (
+                    <VisibilityIcon fontSize="small" />
+                  )}
+                </button>
+              </div>
             </div>
-            <div>
-              <Field
-                as={TextField}
-                type="text"
-                name="lname"
-                placeholder="Last Name"
-                variant="outlined"
-                fullWidth
-              />
-              <ErrorMessage
-                name="lname"
-                component="div"
-                className="text-red-500 text-sm"
-              />
+            <button
+              className="mb-6 w-full text-white bg-blue-900 transition-opacity duration-200 text-heading-6 font-chivo font-bold shadow-sm py-[13px] hover:opacity-75"
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Processing..." : "Sign up"}
+            </button>
+            <div className="flex gap-2">
+              <p className="text-text text-gray-500">
+                Already have an account?
+              </p>
+              <div
+                className="text-blue-900 hover:opacity-70 hover:cursor-pointer"
+                onClick={() => navigate("/login")}
+              >
+                <p className="text-text">Sign in</p>
+              </div>
             </div>
-            <div>
-              <Field
-                as={TextField}
-                type="email"
-                name="email"
-                placeholder="Email"
-                variant="outlined"
-                fullWidth
-              />
-              <ErrorMessage
-                name="email"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-            <div>
-              <Field
-                as={TextField}
-                type="password"
-                name="password"
-                placeholder="Password"
-                variant="outlined"
-                fullWidth
-              />
-              <ErrorMessage
-                name="password"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-          </div>
-          <Button
-            type="submit"
-            variant="contained"
-            className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-200"
-          >
-            Register
-          </Button>
-        </Form>
+          </Form>
+        )}
       </Formik>
-      <div>
-        <p className="text-sm text-gray-500 mt-5">
-          If you already have an account,
-          <span
-            onClick={() => navigate("/login")}
-            className="text-blue-500 hover:underline cursor-pointer"
-          >
-            {" "}Login
-          </span>
-        </p>
-      </div>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React from "react";
 import AddPostButton from "./AddPostButton";
-
+import { AddPostNavigation } from "./AddPostNavigation";
+import { Link } from "react-router-dom";
 const AddPost = () => {
   return (
     <div className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 ">
@@ -35,14 +36,20 @@ const AddPost = () => {
               />
             </button>
           </div>
-          <AddPostButton/>
 
           {/* POST OPTIONS */}
-          <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-500 text-sm">
-            <PostOption icon="/addimage.png" label="Photo" />
-            <PostOption icon="/addVideo.png" label="Video" />
-            <PostOption icon="/poll.png" label="Poll" />
-            <PostOption icon="/addevent.png" label="Event" />
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-500 text-sm">
+              {AddPostNavigation.map((item, index) => (
+                <Link to={item.path} key={index}>
+                  <PostOption key={index} icon={item.icon} label={item.label} />
+                </Link>
+              ))}
+            </div>
+
+            <div className="">
+              <AddPostButton />
+            </div>
           </div>
         </div>
       </div>

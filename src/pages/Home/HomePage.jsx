@@ -1,8 +1,8 @@
-import React from 'react'
-import LeftMenu from '../../components/LeftMenu'
-import RightMenu from '../../components/RightMenu'
-import AddPost from '../../components/AddPost'
-import Feed from '../../components/Feed'
+import React from "react";
+import LeftMenu from "../../components/LeftMenu/LeftMenu";
+import RightMenu from "../../components/RightMenu/RightMenu";
+import AddPost from "../../components/Post/AddPost";
+import Feed from "../../components/Feed";
 const HomePage = () => {
   return (
     <div className="flex gap-6 pt-1">
@@ -20,7 +20,7 @@ const HomePage = () => {
         <RightMenu />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;
