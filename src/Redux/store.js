@@ -1,16 +1,18 @@
-import { legacy_createStore, combineReducers, applyMiddleware, compose } from "redux";
+import { applyMiddleware, combineReducers, legacy_createStore } from "redux";
 import { thunk } from "redux-thunk";
-// import { authReducer } from "./Auth/auth.reducer";
+import { authReducer } from "./Auth/auth.reducer";
 
-const rootReducer = combineReducers({
-  // auth: authReducer
+const rootReducers = combineReducers({
+  // Add your reducers here
+  // Example: user: userReducer,
+  auth: authReducer
+  // Example: product: productReducer,
+  // Example: cart: cartReducer,
+  // Example: order: orderReducer,
+  // Example: review: reviewReducer,
+  // Example: wishlist: wishlistReducer,
+  // Example: notification: notificationReducer,
+  // Example: auth: authReducer,
 });
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
-export const store = legacy_createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(thunk))
-);
-
-export default store;
+export const store = legacy_createStore(rootReducers, applyMiddleware(thunk));

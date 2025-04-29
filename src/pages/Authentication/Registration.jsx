@@ -1,28 +1,37 @@
 import { Button, TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { registerUserAction } from "../../Redux/Auth/auth.action";
 
-const initialValues = { fname:"",lname:"", email: "", password: "" };
-const validationSchema = {
-  fname: Yup.string().required("First name is required"),
-  lname: Yup.string().required("Last name is required"),
-  email: Yup.string().email("Invalid email").required("email is required"),
+const initialValues = { fname: "", lname: "", email: "", password: "" };
+
+const validationSchema = Yup.object({
+  // fname: Yup.string().required("First name is required"),
+  // lname: Yup.string().required("Last name is required"),
+  email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters.")
     .required("Password is required"),
-};
+});
+
 const Registration = () => {
-  const [formValues, setFormValues] = useState();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = (values) => {
     console.log("handleSubmit", values);
+    dispatch(registerUserAction(values));
   };
+
   return (
     <>
       <Formik
-        onSubmit={handleSubmit}
-        // validationSchema={validationSchema}
         initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
       >
         <Form className="flex flex-col space-y-5">
           <div className="flex flex-col space-y-5">
@@ -32,35 +41,33 @@ const Registration = () => {
             </p>
           </div>
           <div className="flex flex-col space-y-5">
-          <div>
+            <div>
               <Field
                 as={TextField}
                 type="text"
                 name="fname"
                 placeholder="First Name"
-                className="border border-gray-300 p-2 rounded-md"
                 variant="outlined"
                 fullWidth
               />
               <ErrorMessage
                 name="fname"
-                component={"div"}
+                component="div"
                 className="text-red-500 text-sm"
               />
             </div>
             <div>
               <Field
                 as={TextField}
-                type="email"
+                type="text"
                 name="lname"
                 placeholder="Last Name"
-                className="border border-gray-300 p-2 rounded-md"
                 variant="outlined"
                 fullWidth
               />
               <ErrorMessage
                 name="lname"
-                component={"div"}
+                component="div"
                 className="text-red-500 text-sm"
               />
             </div>
@@ -70,13 +77,12 @@ const Registration = () => {
                 type="email"
                 name="email"
                 placeholder="Email"
-                className="border border-gray-300 p-2 rounded-md"
                 variant="outlined"
                 fullWidth
               />
               <ErrorMessage
                 name="email"
-                component={"div"}
+                component="div"
                 className="text-red-500 text-sm"
               />
             </div>
@@ -86,13 +92,12 @@ const Registration = () => {
                 type="password"
                 name="password"
                 placeholder="Password"
-                className="border border-gray-300 p-2 rounded-md"
                 variant="outlined"
                 fullWidth
               />
               <ErrorMessage
-                name="email"
-                component={"div"}
+                name="password"
+                component="div"
                 className="text-red-500 text-sm"
               />
             </div>
@@ -102,10 +107,21 @@ const Registration = () => {
             variant="contained"
             className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition duration-200"
           >
-            Login
+            Register
           </Button>
         </Form>
       </Formik>
+      <div>
+        <p className="text-sm text-gray-500 mt-5">
+          If you already have an account,
+          <span
+            onClick={() => navigate("/login")}
+            className="text-blue-500 hover:underline cursor-pointer"
+          >
+            {" "}Login
+          </span>
+        </p>
+      </div>
     </>
   );
 };
