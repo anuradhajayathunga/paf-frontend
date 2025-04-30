@@ -97,7 +97,7 @@ export const getProfileAction = (token) => async (dispatch) => {
 export const updateProfileAction = (reqData) => async (dispatch) => {
   dispatch({ type: UPDATE_PROFILE_REQUEST });
   try {
-    const { data } = await api.post(`${API_BASE_URL}/api/update-user`, reqData)
+    const { data } = await api.put(`${API_BASE_URL}/api/update-user`, reqData)
 
     console.log("Update profile data:", data);
     dispatch({ type: UPDATE_PROFILE_SUCCESS, payload: data });

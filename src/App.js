@@ -5,7 +5,7 @@ import HomePage from "./pages/Home/HomePage";
 import ProfilePage from "./pages/Profile/ProfilePage";
 import Navbar from "./components/Navbar/Navbar";
 import Message from "./pages/Messages/MessagePage";
-import CreatePost from "./components/Post/CreatePost";
+import CreatePost from "./components/Post/PostModal";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getProfileAction } from "./Redux/Auth/auth.action";
@@ -30,8 +30,7 @@ function App() {
             element={auth.user ? <HomePage /> : <Authentication />}
           />
           <Route path="/message" element={<Message />} />
-          <Route path="/profile/:id" element={<ProfilePage />} />
-          <Route path="/createpost" element={<CreatePost />} />
+          <Route path="profile/:id" element={<ProfilePage />} />
 
           <Route path="/*" element={<Authentication />} />
         </Routes>

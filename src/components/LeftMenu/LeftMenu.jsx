@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import ProfileCard from "../ProfileCard";
+import ProfileCard from "./ProfileCard";
 import  { LeftMenuNavigation } from "./LeftMenuNavigation";
 import Ads from "../Ads";
 
