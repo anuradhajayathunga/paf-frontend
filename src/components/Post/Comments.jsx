@@ -3,31 +3,6 @@ import React from "react";
 const Comments = () => {
   return (
     <div className="flex flex-col gap-6 text-sm text-gray-700">
-      {/* Write Comment */}
-      <div className="flex items-start gap-4">
-        <img
-          src="https://images.pexels.com/photos/4668513/pexels-photo-4668513.jpeg?auto=compress&cs=tinysrgb&w=600"
-          alt="User Avatar"
-          width={32}
-          height={32}
-          className="w-8 h-8 rounded-full object-cover"
-        />
-        <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-xl px-4 py-2">
-          <input
-            type="text"
-            placeholder="Write a comment..."
-            className="bg-transparent outline-none w-full text-sm"
-          />
-          <img
-            src="/emoji.png"
-            alt="Emoji"
-            width={16}
-            height={16}
-            className="cursor-pointer ml-2"
-          />
-        </div>
-      </div>
-
       {/* Comment Display */}
       <div className="flex items-start gap-4">
         {/* Avatar */}

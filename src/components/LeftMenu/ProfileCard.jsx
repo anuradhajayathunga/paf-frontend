@@ -1,18 +1,21 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const ProfileCard = () => {
+  const { auth } = useSelector((store) => store);
+  const user = auth?.user;
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-6">
       {/* Cover + Avatar */}
-      <div className="relative h-20">
+      <div className="relative h-32">
         <img
-          src="/noCover.png"
+          src={user?.cover || "/noCover.png"}
           alt="Cover"
           className="rounded-md object-cover w-full h-full"
         />
         <img
-          src="/noAvatar.png"
+          src={user?.avatar || "/noAvatar.png"}
           alt="Avatar"
           width={48}
           height={48}
@@ -23,7 +26,7 @@ const ProfileCard = () => {
       {/* User Info */}
       <div className="pt-8 flex flex-col items-center gap-2">
         <span className="font-semibold text-gray-800">
-          Edward Gabrial May
+          {auth.user?.fname} {auth.user?.lname}
         </span>
 
         {/* Followers */}
@@ -44,7 +47,8 @@ const ProfileCard = () => {
         </div>
 
         {/* Profile Link */}
-        <Link to="/profile">
+        <Link to={`/profile/
+          ${auth.user?.id}`}>
           <button className="mt-2 bg-blue-500 hover:bg-blue-600 transition text-white text-xs px-4 py-1.5 rounded-md">
             My Profile
           </button>
