@@ -71,7 +71,7 @@ const Post = ({ item }) => {
       dispatch(getAllPostAction());
     });
   };
-  
+
   // write comment
   const handleCreateComment = () => {
     const reqData = {
@@ -182,7 +182,7 @@ const Post = ({ item }) => {
           </div>
 
           {/* Swiper Component */}
-          <div className="w-full aspect-square relative overflow-hidden rounded-md bg-black">
+          <div className="w-full max-h-[800px] relative overflow-hidden rounded-md bg-white">
             <Swiper
               modules={[Navigation, Autoplay]}
               // autoplay={{ delay: 4000 }}
@@ -204,11 +204,13 @@ const Post = ({ item }) => {
             >
               {item?.img && (
                 <SwiperSlide>
-                  <img
-                    src={item.img}
-                    alt="Post Image"
-                    className="object-cover w-full h-full"
-                  />
+                  <div className="w-full h-full flex items-center justify-center bg-white">
+                    <img
+                      src={item.img}
+                      alt="Post Image"
+                      className="object-contain max-h-[800px] w-full"
+                    />
+                  </div>
                 </SwiperSlide>
               )}
               {item?.video && (
@@ -218,7 +220,7 @@ const Post = ({ item }) => {
                     controls
                     muted
                     autoPlay={false}
-                    className="min-w-full h-auto rounded-lg"
+                    className="w-full h-auto max-h-[800px] rounded-lg object-contain"
                   />
                 </SwiperSlide>
               )}

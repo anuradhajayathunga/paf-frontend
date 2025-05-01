@@ -28,18 +28,13 @@ const Navbar = () => {
   }, []);
 
   // Handle logout process
-  const handleLogout = () => {
-    dispatch(logoutUserAction());
+  const handleLogout = async() => {
     setShowMenu(false); // Close the menu after logout
-  };
-
-  // Redirect to login page when not authenticated
-  useEffect(() => {
-    if (!isAuthenticated && !loading) {
+    const success=await dispatch(logoutUserAction());
+    if (success) {  
       navigate("/login");
     }
-  }, [isAuthenticated, loading, navigate]);
-
+  };
   return (
     <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-white border-b shadow-sm">
       {/* LEFT - LOGO */}
@@ -114,11 +109,11 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <img 
-                src={user?.avatar || "/avatar-placeholder.png"} 
+                src={user?.avatar || "/login.png"} 
                 alt="Profile" 
                 className="w-8 h-8 rounded-full object-cover"
               />
-              <span className="hidden md:inline">{user?.fname || "User"}</span>
+              {/* <span className="hidden md:inline">{user?.fname || "User"}</span> */}
             </>
           ) : (
             <>

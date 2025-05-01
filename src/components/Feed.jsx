@@ -2,8 +2,9 @@ import React, { useEffect } from "react";
 import Post from "./Post/Post";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPostAction } from "../Redux/Post/post.action";
+import ProfileCard from "./LeftMenu/ProfileCard";
 
-const Feed = () => {
+const Feed = ({ type }) => {
   const dispatch = useDispatch();
   const { post } = useSelector((store) => store);
 
@@ -13,6 +14,8 @@ const Feed = () => {
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
+      {/* {type === "profile" && <ProfileCard />} */}
+      {type === "home"}
       {post?.posts?.map((item, index) => (
         <div
           key={index}
