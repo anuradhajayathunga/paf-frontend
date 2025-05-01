@@ -10,6 +10,7 @@ import {
   UPDATE_PROFILE_SUCCESS, // ✅ Add this
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_FAILURE,
+  LOGOUT_SUCCESS,
 } from "./auth.actionType";
 
 const initialState = {
@@ -49,6 +50,17 @@ export const authReducer = (state = initialState, action) => {
     case REGISTER_FAILURE:
     case UPDATE_PROFILE_FAILURE: // ✅ Catch update errors
       return { ...state, loading: false, error: action.payload };
+      case LOGOUT_SUCCESS:
+        // Clear JWT from localStorage on logout
+        localStorage.removeItem("jwt");
+        return {
+          ...initialState,
+          jwt: null,
+          user: null,
+          isAuthenticated: false,
+          loading: false,
+          error: null,
+        };
 
     default:
       return state;
