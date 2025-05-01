@@ -64,12 +64,6 @@ const MobileMenu = () => {
             >
               Stories
             </Link>
-            <Link
-              to="/"
-              className="w-full text-center rounded-md px-4 py-2 hover:bg-white/20 hover:text-blue-800 transition duration-200"
-            >
-              Profile
-            </Link>
             <hr className="border-t border-blue-200 w-4/5" />
             <Link
               to="/"

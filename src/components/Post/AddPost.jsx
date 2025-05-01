@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
+import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddPostButton from "./AddPostButton";
-import { AddPostNavigation } from "./AddPostNavigation";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import PostModal from "./PostModal";
+
 const AddPost = () => {
+  const { auth } = useSelector((store) => store);
+  const user = auth?.user;
+
+  const [openPostModal, setOpenPostModal] = useState(false);
+
+  const handleOptionClick = (label) => {
+    if (label === "Photo") {
+      setOpenPostModal(true);
+    }
+    // Handle other types if needed
+  };
   return (
     <div className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 ">
       {/* hover:shadow-md transition-all duration-300 */}
       <div className="flex gap-4 items-start">
         {/* AVATAR */}
         <img
-          src="https://images.pexels.com/photos/4668513/pexels-photo-4668513.jpeg?auto=compress&cs=tinysrgb&w=600"
+          src={user?.avatar || "/default-avatar.png"}
           alt="User avatar"
           width={48}
           height={48}
@@ -39,13 +52,40 @@ const AddPost = () => {
 
           {/* POST OPTIONS */}
           <div className="flex items-center justify-between mt-2">
-            <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-500 text-sm">
-              {AddPostNavigation.map((item, index) => (
-                <Link to={item.path} key={index}>
-                  <PostOption key={index} icon={item.icon} label={item.label} />
-                </Link>
-              ))}
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-500 text-sm">
+                <PostOption
+                  icon="/posts.png"
+                  label="Post"
+                  onClick={handleOptionClick}
+                />
+                <PostOption
+                  icon="/addimage.png"
+                  label="Photo"
+                  onClick={handleOptionClick}
+                />
+                <PostOption
+                  icon="/addVideo.png"
+                  label="Video"
+                  onClick={handleOptionClick}
+                />
+                <PostOption
+                  icon="/poll.png"
+                  label="Poll"
+                  onClick={handleOptionClick}
+                />
+                <PostOption
+                  icon="/addevent.png"
+                  label="Event"
+                  onClick={handleOptionClick}
+                />
+              </div>
             </div>
+            {/* Post Modal */}
+            <PostModal
+              open={openPostModal}
+              handleClose={() => setOpenPostModal(false)}
+            />
 
             <div className="">
               <AddPostButton />
@@ -57,11 +97,15 @@ const AddPost = () => {
   );
 };
 
-const PostOption = ({ icon, label }) => (
-  <div className="flex items-center gap-2 cursor-pointer hover:text-blue-500 transition">
+const PostOption = ({ icon, label, onClick }) => (
+  <div
+    className="flex items-center gap-2 cursor-pointer hover:text-blue-500 transition"
+    onClick={() => onClick(label)}
+  >
     <img src={icon} alt={label} width={20} height={20} />
     <span>{label}</span>
   </div>
 );
+
 
 export default AddPost;

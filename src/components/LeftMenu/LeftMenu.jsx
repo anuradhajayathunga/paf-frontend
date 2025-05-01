@@ -24,7 +24,7 @@ const LeftMenu = ({ type }) => {
           </div>
         ))}
       </div>
-      <Ads size="sm" />
+      {/* <Ads size="sm" /> */}
     </div>
   );
 };

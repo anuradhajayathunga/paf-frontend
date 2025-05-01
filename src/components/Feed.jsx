@@ -1,18 +1,27 @@
-import React from "react";
-import Post from "./Post";
+import React, { useEffect } from "react";
+import Post from "./Post/Post";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPostAction } from "../Redux/Post/post.action";
 
 const Feed = () => {
-  // Dummy array to simulate posts — replace with real post data later
-  const posts = Array.from({ length: 9 });
+  const dispatch = useDispatch();
+  const { post } = useSelector((store) => store);
+
+  useEffect(() => {
+    dispatch(getAllPostAction());
+  }, [dispatch]);
+  
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
-      {posts.map((_, index) => (
+      {post?.posts?.map((item, index) => (
         <div
           key={index}
-          className={`border-b ${index === posts.length - 1 ? "border-none" : ""} pb-6`}
+          className={`border-b ${
+            index === post?.posts?.length - 1 ? "border-none" : ""
+          } pb-6`}
         >
-          <Post />
+          <Post item={item} />
         </div>
       ))}
     </div>

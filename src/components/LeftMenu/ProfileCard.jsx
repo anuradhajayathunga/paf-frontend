@@ -8,7 +8,7 @@ const ProfileCard = () => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-6">
       {/* Cover + Avatar */}
-      <div className="relative h-20">
+      <div className="relative h-32">
         <img
           src={user?.cover || "/noCover.png"}
           alt="Cover"

@@ -1,7 +1,45 @@
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import MobileMenu from "../MobileMenu";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUserAction } from "../../Redux/Auth/auth.action";
 
 const Navbar = () => {
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Get auth state from Redux
+  const { loading, error, jwt, user } = useSelector((state) => state.auth);
+  
+  // Check authentication status properly
+  const isAuthenticated = Boolean(jwt || localStorage.getItem("jwt"));
+
+  // Close menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle logout process
+  const handleLogout = () => {
+    dispatch(logoutUserAction());
+    setShowMenu(false); // Close the menu after logout
+  };
+
+  // Redirect to login page when not authenticated
+  useEffect(() => {
+    if (!isAuthenticated && !loading) {
+      navigate("/login");
+    }
+  }, [isAuthenticated, loading, navigate]);
+
   return (
     <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-white border-b shadow-sm">
       {/* LEFT - LOGO */}
@@ -17,21 +55,21 @@ const Navbar = () => {
       {/* CENTER - NAV LINKS */}
       <nav className="hidden md:flex xl:hidden items-center gap-4 text-gray-700 text-sm w-[50%]">
         <Link
-          href="/"
+          to="/home"
           className="flex items-center gap-2 hover:text-blue-600 transition"
         >
           <img src="/home.png" alt="Home" width={16} height={16} />
           <span>Home</span>
         </Link>
         <Link
-          href="/"
+          to="/friends"
           className="flex items-center gap-2 hover:text-blue-600 transition"
         >
           <img src="/friends.png" alt="Friends" width={16} height={16} />
           <span>Friends</span>
         </Link>
         <Link
-          href="/"
+          to="/stories"
           className="flex items-center gap-2 hover:text-blue-600 transition"
         >
           <img src="/stories.png" alt="Stories" width={16} height={16} />
@@ -39,7 +77,7 @@ const Navbar = () => {
         </Link>
       </nav>
 
-      {/* SEARCH - ONLY SHOWS ON XL */}
+      {/* SEARCH - ONLY ON XL */}
       <div className="hidden xl:flex items-center bg-gray-100 px-3 py-2 rounded-sm w-80">
         <input
           type="text"
@@ -49,10 +87,8 @@ const Navbar = () => {
         <img src="/search.png" alt="Search" width={16} height={16} />
       </div>
 
-      {/* RIGHT - AUTH & ICONS */}
-      <div className="flex items-center gap-4 xl:gap-5">
-        {/* <div className="w-5 h-5 animate-spin rounded-full border-2 border-blue-500 border-r-transparent"></div> */}
-
+      {/* RIGHT - ICONS */}
+      <div className="flex items-center gap-4 xl:gap-5 relative" ref={menuRef}>
         <div className="hidden md:flex items-center gap-4">
           <button className="hover:bg-gray-100 p-2 rounded-md transition">
             <img src="/people.png" alt="People" width={20} height={20} />
@@ -70,16 +106,76 @@ const Navbar = () => {
           </button>
         </div>
 
-        <Link
-          to="/login"
+        {/* USER MENU DROPDOWN */}
+        <button
+          onClick={() => setShowMenu((prev) => !prev)}
           className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
         >
-          <img src="/login.png" alt="Login" width={20} height={20} />
-          Login
-        </Link>
+          {isAuthenticated ? (
+            <>
+              <img 
+                src={user?.avatar || "/avatar-placeholder.png"} 
+                alt="Profile" 
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <span className="hidden md:inline">{user?.fname || "User"}</span>
+            </>
+          ) : (
+            <>
+              <img src="/login.png" alt="Login" width={20} height={20} />
+              <span className="hidden md:inline">Login</span>
+            </>
+          )}
+        </button>
+
+        {showMenu && (
+          <div className="absolute top-14 right-0 w-44 bg-white shadow-lg border rounded-md text-sm z-50">
+            {isAuthenticated ? (
+              <>
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/settings"
+                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Settings
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/register"
+                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="md:hidden">
-          <MobileMenu />
+          <MobileMenu isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
         </div>
       </div>
     </header>
