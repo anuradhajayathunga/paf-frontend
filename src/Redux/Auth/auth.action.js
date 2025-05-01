@@ -7,6 +7,9 @@ import {
   LOGIN_FAILURE,
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
+  LOGOUT_FAILURE,
+  LOGOUT_REQUEST,
+  LOGOUT_SUCCESS,
   REGISTER_FAILURE,
   REGISTER_REQUEST,
   REGISTER_SUCCESS,
@@ -22,14 +25,19 @@ export const loginUserAction = (loginData) => async (dispatch) => {
     const { data } = await axios.post(`${API_BASE_URL}/auth/signin`, loginData);
 
     if (data.token) {
+      // Store JWT in localStorage for persistence across refreshes
       localStorage.setItem("jwt", data.token);
+      
+      // Update Redux state
       dispatch({ type: LOGIN_SUCCESS, payload: data.token });
-      // navigate("/home"); // Redirect to home page after successful login
+      
+      // Optionally, fetch user profile after successful login
+      dispatch(getProfileAction(data.token));
+      
+      return true;
     } else {
       throw new Error("JWT token not received.");
     }
-
-    console.log("Login data:", data);
   } catch (error) {
     console.error("Login error:", error);
 
@@ -37,6 +45,8 @@ export const loginUserAction = (loginData) => async (dispatch) => {
       type: LOGIN_FAILURE,
       payload: error.response?.data?.message || error.message || "Login failed",
     });
+    
+    return false;
   }
 };
 
@@ -97,7 +107,7 @@ export const getProfileAction = (token) => async (dispatch) => {
 export const updateProfileAction = (reqData) => async (dispatch) => {
   dispatch({ type: UPDATE_PROFILE_REQUEST });
   try {
-    const { data } = await api.put(`${API_BASE_URL}/api/update-user`, reqData)
+    const { data } = await api.put(`${API_BASE_URL}/api/update-user`, reqData);
 
     console.log("Update profile data:", data);
     dispatch({ type: UPDATE_PROFILE_SUCCESS, payload: data });
@@ -109,5 +119,27 @@ export const updateProfileAction = (reqData) => async (dispatch) => {
       payload:
         error.response?.data?.message || error.message || "Registration failed",
     });
+  }
+};
+
+// Logout Action
+export const logoutUserAction = () => async (dispatch) => {
+  dispatch({ type: LOGOUT_REQUEST });
+  try {
+    localStorage.removeItem("jwt");
+
+    dispatch({ type: LOGOUT_SUCCESS });
+
+    return true;
+  } catch (error) {
+    console.error("Logout error:", error);
+
+    dispatch({
+      type: LOGOUT_FAILURE,
+      payload:
+        error.response?.data?.message || error.message || "Logout failed",
+    });
+
+    return false;
   }
 };
