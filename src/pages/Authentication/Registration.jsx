@@ -2,12 +2,11 @@ import { TextField } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
-import { getAllPostAction } from "../../Redux/Post/post.action";
 
 const initialValues = { fname: "", lname: "", email: "", password: "" };
 
@@ -27,14 +26,11 @@ const Registration = () => {
 
   const handleSubmit = (values) => {
     console.log("handleSubmit", values);
-    const success=dispatch(registerUserAction(values));
+    const success = dispatch(registerUserAction(values));
     if (success) {
-      // Redirect will happen automatically due to the useEffect above
-      // But we can force it here for immediate feedback
-      navigate("/home");
+      navigate("/login");
     }
   };
-
 
   return (
     <>

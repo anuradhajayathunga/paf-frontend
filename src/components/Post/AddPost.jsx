@@ -22,7 +22,7 @@ const AddPost = () => {
       <div className="flex gap-4 items-start">
         {/* AVATAR */}
         <img
-          src={user?.avatar || "/default-avatar.png"}
+          src={user?.avatar || "/assets/avatars/def.jpeg"}
           alt="User avatar"
           width={48}
           height={48}
@@ -106,6 +106,5 @@ const PostOption = ({ icon, label, onClick }) => (
     <span>{label}</span>
   </div>
 );
-
 
 export default AddPost;
