@@ -17,13 +17,8 @@ const Authentication = () => {
         </Grid>
         <Grid item xs={5} className="flex-1 bg-bg-2 text-center grid place-items-center py-[50px]">
           <div className="max-w-[800px]">
-              {/* <div className="flex flex-col  items-center mb-5 space-y-1">
-                <h1 className="logo">ShutterSync</h1>
-                <p className="text-left text-sm w-[70&]">A Community to Learn, Share, and Snap Brighter</p>
-              </div> */}
-              {/* <Login/> */}
               <Routes>
-                <Route path="/*" element={<Login />} />
+                {/* <Route path="/*" element={<Login />} /> */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Registration />} />
               </Routes>
