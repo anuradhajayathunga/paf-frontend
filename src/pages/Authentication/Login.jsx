@@ -1,10 +1,11 @@
-import {  TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { loginUserAction } from "../../Redux/Auth/auth.action";
+import { getAllPostAction } from "../../Redux/Post/post.action";
 
 const initialValues = { email: "", password: "" };
 
@@ -19,10 +20,26 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (values) => {
+  const { loading, error, jwt } = useSelector((state) => state.auth);
+
+  // Check if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      navigate("/home");
+    }
+  }, [jwt, navigate]);
+
+  const handleSubmit = async (values) => {
     console.log("handleSubmit", values);
-    dispatch(loginUserAction(values));
+    const success = await dispatch(loginUserAction(values));
+    if (success) {
+      // Redirect will happen automatically due to the useEffect above
+      // But we can force it here for immediate feedback
+      navigate("/home");
+    }
   };
+
 
   return (
     <>
@@ -95,21 +112,19 @@ const Login = () => {
             className="mb-6 w-full text-white bg-c-blue-900 transition-opacity duration-200 text-heading-6 font-chivo font-bold shadow-sm py-[13px] hover:opacity-75"
             type="submit"
           >
-            Log in
+            {loading ? "Loggin..." : "Login"}
           </button>
           <div className="flex gap-2">
-        <p className="text-text text-gray-500">Don't have an account?</p>
-        <div
-          className="text-c-blue-900 hover:opacity-70 hover:cursor-pointer"
-          onClick={() => navigate("/register")}
-        >
-          <p className="text-text">Sign up</p>
-        </div>
-      </div>
+            <p className="text-text text-gray-500">Don't have an account?</p>
+            <div
+              className="text-c-blue-900 hover:opacity-70 hover:cursor-pointer"
+              onClick={() => navigate("/register")}
+            >
+              <p className="text-text">Sign up</p>
+            </div>
+          </div>
         </Form>
       </Formik>
-
-      
     </>
   );
 };

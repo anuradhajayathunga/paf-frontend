@@ -2,11 +2,12 @@ import { TextField } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
+import { getAllPostAction } from "../../Redux/Post/post.action";
 
 const initialValues = { fname: "", lname: "", email: "", password: "" };
 
@@ -28,6 +29,7 @@ const Registration = () => {
     console.log("handleSubmit", values);
     dispatch(registerUserAction(values));
   };
+
 
   return (
     <>
