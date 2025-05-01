@@ -27,7 +27,12 @@ const Registration = () => {
 
   const handleSubmit = (values) => {
     console.log("handleSubmit", values);
-    dispatch(registerUserAction(values));
+    const success=dispatch(registerUserAction(values));
+    if (success) {
+      // Redirect will happen automatically due to the useEffect above
+      // But we can force it here for immediate feedback
+      navigate("/home");
+    }
   };
 
 
