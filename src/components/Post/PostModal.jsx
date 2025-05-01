@@ -78,10 +78,14 @@ const PostModal = ({ open, handleClose }) => {
 
   const handleVideoChange = async (event) => {
     setIsLoading(true);
-    const videoUrl = await uploadToCloudinary(event.target.files[0], "video");
+
+    const file = event.target.files[0];
+    const fileType = file.type.startsWith("video") ? "video" : "image";
+    const videoUrl = await uploadToCloudinary(file, fileType);
     setVideoPreview(videoUrl);
     formik.setFieldTouched("video", true); // Set touched
     formik.setFieldValue("video", videoUrl);
+
     setIsLoading(false);
   };
 
@@ -106,7 +110,11 @@ const PostModal = ({ open, handleClose }) => {
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
         <Box display="flex" justifyContent="space-between" mb={2}>
-          <Typography variant="h6" fontWeight={600} className="text-xl font-semibold text-gray-800 mb-2">
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            className="text-xl font-semibold text-gray-800 mb-2"
+          >
             Create Photography Post
           </Typography>
           <IconButton onClick={handleClose}>

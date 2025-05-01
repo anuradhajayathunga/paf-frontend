@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Comments from "./Comments";
@@ -90,7 +92,7 @@ const Post = ({ item }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <img
-            src={item?.user?.avatar || "/noAvatar.png"}
+            src={item?.user?.avatar || "/assets/avatars/def.jpeg"} 
             alt="User Avatar"
             width={40}
             height={40}
@@ -160,11 +162,12 @@ const Post = ({ item }) => {
               ref={prevRef}
               className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
             >
-              <img
+              {/* <img
                 src="assets/images/icons/icon-prev.svg"
                 alt="Previous"
                 className="w-6 h-6"
-              />
+              /> */}
+              <ArrowBackIosRoundedIcon />
             </button>
           </div>
 
@@ -173,11 +176,12 @@ const Post = ({ item }) => {
               ref={nextRef}
               className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
             >
-              <img
+              {/* <img
                 src="assets/images/icons/icon-next.svg"
                 alt="Next"
                 className="w-6 h-6 "
-              />
+              /> */}
+              <ArrowForwardIosRoundedIcon />
             </button>
           </div>
 
@@ -204,14 +208,14 @@ const Post = ({ item }) => {
             >
               {item?.img && (
                 <SwiperSlide>
-                  <div className="w-full h-full flex items-center justify-center bg-white">
-                    <img
-                      src={item.img}
-                      alt="Post Image"
-                      className="object-contain max-h-[800px] w-full"
-                    />
-                  </div>
-                </SwiperSlide>
+                <div className="w-full h-[600px] flex items-center justify-center bg-white">
+                  <img
+                    src={item.img}
+                    alt="Post Image"
+                    className="object-contain max-h-full max-w-full"
+                  />
+                </div>
+              </SwiperSlide>
               )}
               {item?.video && (
                 <SwiperSlide>
@@ -219,9 +223,10 @@ const Post = ({ item }) => {
                     src={item.video}
                     controls
                     muted
-                    autoPlay={false}
-                    className="w-full h-auto max-h-[800px] rounded-lg object-contain"
+                    autoPlay={true}
+                    className="w-full h-auto max-h-[600px] rounded-lg object-contain"
                   />
+                  
                 </SwiperSlide>
               )}
             </Swiper>
@@ -298,7 +303,7 @@ const Post = ({ item }) => {
       {/* Write Comment */}
       <div className="flex items-start gap-4">
         <img
-          src={item?.user?.avatar || "/noAvatar.png"}
+          src={item?.user?.avatar || "/assets/avatars/def.jpeg"} 
           alt="User Avatar"
           width={32}
           height={32}

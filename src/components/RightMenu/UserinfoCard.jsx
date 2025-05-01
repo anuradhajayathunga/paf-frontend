@@ -48,12 +48,12 @@ const UserinfoCard = () => {
               Lives in <span className="font-medium">{user?.city}</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          {/* <div className="flex items-center gap-2">
             <img src="/school.png" alt="School" width={18} height={18} />
             <span>
               Studied at <span className="font-medium">Royal College</span>
             </span>
-          </div>
+          </div> */}
           <div className="flex items-center gap-2">
             <img src="/work.png" alt="Workplace" width={18} height={18} />
             <span>
