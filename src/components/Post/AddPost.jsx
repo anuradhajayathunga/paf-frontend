@@ -39,19 +39,20 @@ const AddPost = () => {
               placeholder="What's on your mind?"
             />
             {/* Emoji */}
-            <button type="button" className="absolute bottom-3 right-3">
-              <img
+            <button type="button" className="absolute bottom-2 right-1">
+              {/* <img
                 src="/emoji.png"
                 alt="Emoji"
                 width={20}
                 height={20}
                 className="w-5 h-5 opacity-70 hover:opacity-100 transition"
-              />
+              /> */}
+            <AddPostButton />
             </button>
           </div>
 
           {/* POST OPTIONS */}
-          <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center justify-between -mt-3">
             <div className="flex items-center justify-between mt-2">
               <div className="flex flex-wrap items-center gap-4 mt-4 text-gray-500 text-sm">
                 <PostOption
@@ -86,10 +87,6 @@ const AddPost = () => {
               open={openPostModal}
               handleClose={() => setOpenPostModal(false)}
             />
-
-            <div className="">
-              <AddPostButton />
-            </div>
           </div>
         </div>
       </div>

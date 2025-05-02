@@ -70,7 +70,7 @@ const ProfilePage = () => {
                 />
               </button>
             </div>
-            <h1 className="mt-4 text-xl md:text-2xl font-semibold text-gray-900">
+            <h1 className="mt-4 text-xl md:text-2xl font-semibold text-gray-900 capitalize">
               {auth.user?.fname} {auth.user?.lname}
             </h1>
             <div className="flex gap-12 mt-4 text-center">

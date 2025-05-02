@@ -15,6 +15,8 @@ import {
   DELETE_POST_REQUEST,
   DELETE_POST_SUCCESS,
   DELETE_POST_FAILURE,
+  CREATE_COMMENT_FAILURE,
+  CREATE_COMMENT_REQUEST,
 } from "./post.actionType";
 
 const initialState = {
@@ -23,7 +25,9 @@ const initialState = {
   error: null,
   post: [],
   like: null,
-  comment: [],
+
+  comment: null,
+  comments:[]
 };
 
 export const postReducer = (state = initialState, action) => {
@@ -38,6 +42,8 @@ export const postReducer = (state = initialState, action) => {
         error: null,
         loading: true,
       };
+    case CREATE_COMMENT_REQUEST:
+      return { ...state, loading: true };
 
     case ADD_POST_SUCCESS:
       return {
@@ -52,7 +58,7 @@ export const postReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         posts: action.payload,
-        comment: action.payload.comments,
+        comments: action.payload.comments,
         error: null,
       };
 
@@ -74,15 +80,7 @@ export const postReducer = (state = initialState, action) => {
       };
 
     case CREATE_COMMENT_SUCCESS:
-      return {
-        ...state,
-        loading: false,
-        comment: [action.payload, ...state.comment],
-        posts: state.posts.map((item) =>
-          item._id === action.payload._id ? action.payload : item
-        ),
-        error: null,
-      };
+      return { loading: false, comment: action.payload, error: null };
 
     case ADD_POST_FAILURE:
     case GET_ALL_POST_FAILURE:
@@ -94,7 +92,8 @@ export const postReducer = (state = initialState, action) => {
         loading: false,
         error: action.payload,
       };
-
+    case CREATE_COMMENT_FAILURE:
+      return { loading: false, comment: null, error: action.payload };
     default:
       return state;
   }

@@ -21,11 +21,11 @@ const AddPostButton = () => {
         <>
           <SendRoundedIcon
             sx={{ color: blue[500] }}
-            className="text-white group-hover:translate-x-1 transition-transform duration-200"
+            className="text-white group-hover:translate-x-1 transition-transform duration-200 "
           />
-          <span className="text-md text-blue-300 hover:text-blue-600">
+          {/* <span className="text-md text-blue-300 hover:text-blue-600">
             Send
-          </span>
+          </span> */}
         </>
       )}
     </button>

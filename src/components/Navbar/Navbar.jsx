@@ -109,7 +109,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <img 
-                src={user?.avatar || "/assets/avatars/def.jpeg"} 
+                src={user?.avatar  || "/login.png"} 
                 alt="Profile" 
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -117,15 +117,23 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <img src="/login.png" alt="Login" width={20} height={20} />
-              <span className="hidden md:inline">Login</span>
+            <Link
+                  to="/login"
+                  aria-current="page"
+                  className="router-link-active router-link-exact-active flex items-center z-10 relative transition-all duration-200 group px-[22px] py-[15px] lg:px-[32px] lg:py-[22px] rounded-[50px] bg-gray-100 text-gray-900 hover:bg-c-green-300"
+                >
+                  <span className="block text-inherit w-full h-full rounded-[50px] text-md font-bold font-chivo group-hover:text-blue">
+                    Log in
+                  </span>
+                 
+                </Link>
+              
             </>
           )}
         </button>
 
-        {showMenu && (
+        {showMenu && isAuthenticated &&(
           <div className="absolute top-14 right-0 w-44 bg-white shadow-lg border rounded-md text-sm z-50">
-            {isAuthenticated ? (
               <>
                 <Link
                   to={`/profile/${user?.id}`}
@@ -148,24 +156,6 @@ const Navbar = () => {
                   Logout
                 </button>
               </>
-            ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Register
-                </Link>
-              </>
-            )}
           </div>
         )}
 
