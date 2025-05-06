@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getProgressByUser, createProgress, updateProgress, deleteProgress } from '../services/progressService';
-import ProgressForm from './ProgressForm'; // Import the form
+import ProgressForm from './ProgressForm';
+import { FaPlus, FaEdit, FaTrashAlt, FaSearch } from 'react-icons/fa'; // Import icons
 
 const ProgressList = () => {
   const userId = 1; // Set correct userId dynamically later
   const [progressList, setProgressList] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false); // State to toggle the form
-  const [editingItem, setEditingItem] = useState(null); // State for editing
+  const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState(null);
 
   useEffect(() => {
     loadProgress();
@@ -27,7 +28,6 @@ const ProgressList = () => {
 
   const handleFormSubmit = (progress) => {
     if (editingItem) {
-      // Update existing progress
       updateProgress(editingItem.id, { ...progress, userId })
         .then(() => {
           loadProgress();
@@ -39,7 +39,6 @@ const ProgressList = () => {
           setError('Failed to update progress entry.');
         });
     } else {
-      // Create new progress
       createProgress({ ...progress, userId })
         .then(() => {
           loadProgress();
@@ -55,7 +54,7 @@ const ProgressList = () => {
   const handleDelete = (id) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this progress entry?');
     if (!confirmDelete) {
-      return; // Exit if the user cancels the deletion
+      return;
     }
 
     deleteProgress(id)
@@ -73,7 +72,7 @@ const ProgressList = () => {
   );
 
   return (
-    <div className="progress-list container mx-auto p-6 bg-gray-100 rounded-lg shadow-md max-w-4xl">
+    <div className="progress-list container mx-auto p-6 bg-gray-50 rounded-lg shadow-md max-w-5xl">
       {showForm ? (
         <ProgressForm
           onSubmit={handleFormSubmit}
@@ -88,7 +87,7 @@ const ProgressList = () => {
         <>
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Learning Progress</h1>
+              <h1 className="text-3xl font-bold text-gray-800">Learning Progress</h1>
               <p className="text-gray-600">Track your learning journey and monitor your progress</p>
             </div>
             <button
@@ -96,20 +95,23 @@ const ProgressList = () => {
                 setShowForm(true);
                 setEditingItem(null);
               }}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
             >
-              + New Entry
+              <FaPlus className="mr-2" /> New Entry
             </button>
           </div>
 
-          <div className="flex justify-between items-center mb-6">
-            <input
-              type="text"
-              placeholder="Search entries by topic..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+          <div className="flex items-center mb-6">
+            <div className="relative w-full max-w-md">
+              <FaSearch className="absolute left-3 top-3 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search entries by topic..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
           </div>
 
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -119,43 +121,45 @@ const ProgressList = () => {
               {filteredProgressList.map(progress => (
                 <li
                   key={progress.id}
-                  className="p-4 bg-white rounded-lg shadow flex flex-col md:flex-row md:justify-between items-start md:items-center"
+                  className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition flex flex-col md:flex-row md:justify-between items-start md:items-center"
                 >
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-800">{progress.title}</h3>
-                    <p className="text-gray-600">{progress.description}</p>
-                    <p className="text-sm text-gray-500">
-                      <span className="font-medium">Date:</span> {progress.date}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <span className="font-medium">Duration:</span> {progress.duration} minutes
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      <span className="font-medium">Status:</span> {progress.status}
-                    </p>
+                    <h3 className="text-xl font-semibold text-gray-800">{progress.title}</h3>
+                    <p className="text-gray-600 mt-1">{progress.description}</p>
+                    <div className="text-sm text-gray-500 mt-2 space-y-1">
+                      <p>
+                        <span className="font-medium">Date:</span> {progress.date}
+                      </p>
+                      <p>
+                        <span className="font-medium">Duration:</span> {progress.duration} minutes
+                      </p>
+                      <p>
+                        <span className="font-medium">Status:</span> {progress.status}
+                      </p>
+                    </div>
                   </div>
-                  <div className="mt-4 md:mt-0 flex space-x-2">
+                  <div className="mt-4 md:mt-0 flex space-x-3">
                     <button
                       onClick={() => {
                         setEditingItem(progress);
                         setShowForm(true);
                       }}
-                      className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
+                      className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
                     >
-                      Edit
+                      <FaEdit className="mr-2" /> Edit
                     </button>
                     <button
                       onClick={() => handleDelete(progress.id)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                     >
-                      Delete
+                      <FaTrashAlt className="mr-2" /> Delete
                     </button>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <div className="text-center bg-white p-6 rounded-lg shadow">
+            <div className="text-center bg-white p-6 rounded-lg shadow-md">
               <h3 className="text-lg font-semibold text-gray-800">No entries found</h3>
               <p className="text-gray-600">You haven't created any learning progress entries yet.</p>
               <button
