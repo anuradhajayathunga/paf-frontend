@@ -85,20 +85,28 @@ const ProgressList = () => {
         />
       ) : (
         <>
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex justify-between items-center mb-6 relative">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Learning Progress</h1>
               <p className="text-gray-600">Track your learning journey and monitor your progress</p>
             </div>
-            <button
-              onClick={() => {
-                setShowForm(true);
-                setEditingItem(null);
-              }}
-              className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-            >
-              <FaPlus className="mr-2" /> New Entry
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => {
+                  setShowForm(true);
+                  setEditingItem(null);
+                }}
+                className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              >
+                <FaPlus className="mr-2" /> New Entry
+              </button>
+              {/* Animated Hand */}
+              <div className="absolute top-1/4 -left-10 transform -translate-y-1/2 animate-bounce">
+                <span role="img" aria-label="hand" className="text-3xl">
+                👉
+                </span>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center mb-6">
