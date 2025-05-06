@@ -144,6 +144,20 @@ const ProgressList = () => {
                       <p>
                         <span className="font-medium">Status:</span> {progress.status}
                       </p>
+                      {/* Display Resources */}
+                      {progress.resources && (
+                        <p>
+                          <span className="font-medium">Resources:</span>{' '}
+                          <a
+                            href={progress.resources}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
+                          >
+                            {progress.resources}
+                          </a>
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="mt-4 md:mt-0 flex space-x-3">
