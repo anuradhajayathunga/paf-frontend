@@ -53,6 +53,11 @@ const ProgressList = () => {
   };
 
   const handleDelete = (id) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this progress entry?');
+    if (!confirmDelete) {
+      return; // Exit if the user cancels the deletion
+    }
+
     deleteProgress(id)
       .then(() => {
         loadProgress();
