@@ -19,7 +19,8 @@ function CreatePlanPage() {
   const addTopic = () => {
     setTopics([...topics, { name: '', resourceUrl: '', targetDate: '', completed: false }]);
   };
- // Validate fields for a single topic
+ 
+
   const validateTopic = (topic, index) => {
     const errors = {};
     if (!topic.name.trim()) {
@@ -33,7 +34,7 @@ function CreatePlanPage() {
     } else {
       const selectedDate = new Date(topic.targetDate);
       const currentDate = new Date();
-      // Reset time part for accurate date comparison
+     
       currentDate.setHours(0, 0, 0, 0);
       selectedDate.setHours(0, 0, 0, 0);
 
@@ -83,7 +84,7 @@ function CreatePlanPage() {
       const createdPlan = await createPlan(newPlan);
       navigate(`/view-plan/${createdPlan.id}`); // Navigate to view plan page
     } catch (error) {
-      console.error('Failed to create plan', error);
+        //console.error('Failed to create plan', error);
     }
   };
 
