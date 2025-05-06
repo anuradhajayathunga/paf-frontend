@@ -68,3 +68,28 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+
+## 📘 Learning Plan - Frontend
+
+This module allows users to manage their photography-related learning plans.
+
+### 🔹 Features
+- Create structured learning plans with topic names, resources, and deadlines
+- View all saved plans in a responsive card layout
+- Update milestones as learning progresses
+- Delete plans no longer needed
+- Authentication-protected routes using OAuth2
+
+### 📌 Tech Stack
+- React.js with functional components
+- Axios for API calls
+- React Router for navigation
+- Tailwind CSS for styling
+
+### 🖼️ UI Flow
+1. Navigate to `Learning Plan` via the dashboard.
+2. Fill in topic, resource link, and target date to create a new plan.
+3. View existing plans in a scrollable layout.
+4. Use the edit or delete buttons for each plan entry.
