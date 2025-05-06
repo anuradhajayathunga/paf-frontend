@@ -4,6 +4,7 @@ import { createProgress, updateProgress } from '../services/progressService';
 const ProgressForm = ({ onSubmit, initialData = {}, buttonLabel, onCancel }) => {
   const [userId, setUserId] = useState(initialData.userId || '');
   const [completedDate, setCompletedDate] = useState(initialData.completedDate || new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState(initialData.startDate || new Date().toISOString().split('T')[0]); // New state for Start Date
   const [duration, setDuration] = useState(initialData.duration || '');
   const [status, setStatus] = useState(initialData.status || 'Not Started');
   const [title, setTitle] = useState(initialData.title || '');
@@ -28,7 +29,7 @@ const ProgressForm = ({ onSubmit, initialData = {}, buttonLabel, onCancel }) => 
       return;
     }
 
-    const progressData = { userId, completedDate, duration, status, title, description, category, reflections, resources };
+    const progressData = { userId, startDate, completedDate, duration, status, title, description, category, reflections, resources };
 
     try {
       if (initialData.id) {
@@ -82,6 +83,21 @@ const ProgressForm = ({ onSubmit, initialData = {}, buttonLabel, onCancel }) => 
           placeholder="Enter User ID"
           value={userId}
           onChange={(e) => setUserId(e.target.value)}
+          required
+          className="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+        />
+      </div>
+
+      {/* Start Date */}
+      <div>
+        <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+          Start Date *
+        </label>
+        <input
+          id="startDate"
+          type="date"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
           required
           className="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
