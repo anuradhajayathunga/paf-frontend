@@ -43,7 +43,7 @@ function ViewPlansPage() {
       title: editedTitle,
       topicsJson: JSON.stringify(plan.topics)
     };
-    await updatePlan(plan.id, updatedPlan);
+    await updatePlan(plan.id, updatePlan);
     setEditingPlanId(null);
     fetchPlans();
   };
