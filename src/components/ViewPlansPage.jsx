@@ -117,8 +117,8 @@ function ViewPlansPage() {
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800">Your Learning Plans</h2>
+      <div className="flex flex-col items-center mb-8">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Learning Plans</h2>
         <button
           onClick={() => navigate('/create')}
           className="px-6 py-2 bg-green-500 hover:bg-green-700 text-white font-semibold rounded-lg transition"
