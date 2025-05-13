@@ -196,9 +196,12 @@ const ProgressForm = ({ onSubmit, initialData = {}, buttonLabel, onCancel }) => 
           className="w-full max-w-lg px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value="">Select Category</option>
-          <option value="Programming">Programming</option>
-          <option value="Design">Design</option>
-          <option value="Marketing">Marketing</option>
+          <option value="Nature & Landscape">Nature & Landscape</option>
+          <option value="Urban & Architecture">Urban & Architecture</option>
+          <option value="MarPeople & Portraitsketing">People & Portraits</option>
+          <option value="Events & Celebrations">Events & Celebrations</option>
+          <option value="Travel & Adventure">Travel & Adventure</option>
+          <option value="Macro & Abstract">Macro & Abstract</option>
           <option value="Other">Other</option>
         </select>
       </div>
