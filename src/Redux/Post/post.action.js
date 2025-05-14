@@ -18,6 +18,9 @@ import {
   LIKE_POST_FAILURE,
   LIKE_POST_REQUEST,
   LIKE_POST_SUCCESS,
+  SAVE_POST_FAILURE,
+  SAVE_POST_REQUEST,
+  SAVE_POST_SUCCESS,
   UPDATE_POST_FAILURE,
   UPDATE_POST_REQUEST,
   UPDATE_POST_SUCCESS,
@@ -128,6 +131,24 @@ export const deletePostAction = (postId) => async (dispatch) => {
         "Something went wrong",
     });
     console.error("Error deleting post", error);
+  }
+};
+
+export const savePostAction = (postId) => async (dispatch) => {
+  dispatch({ type: SAVE_POST_REQUEST });
+  try {
+    const { data } = await api.put(`/post/save/${postId}`);
+    dispatch({ type: SAVE_POST_SUCCESS, payload: data });
+    console.log("Save post -->", data);
+  } catch (error) {
+    dispatch({
+      type: SAVE_POST_FAILURE,
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
+    console.error("Error saving post -->", error);
   }
 };
 

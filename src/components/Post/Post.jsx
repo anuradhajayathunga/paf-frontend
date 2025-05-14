@@ -18,20 +18,28 @@ import {
   deletePostAction,
   getAllPostAction,
   updatePostAction,
+  savePostAction,
 } from "../../Redux/Post/post.action";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
 import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
+import { toast } from "react-toastify";
+
 const Post = ({ item }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
-  const [commentText, setCommentText] = useState(""); // State to manage comment input
-  const { auth } = useSelector((store) => store);
+  const [commentText, setCommentText] = useState("");
+  const { auth, post } = useSelector((store) => store);
   const user = auth?.user;
   const isOwner = user?.id === item?.user?.id;
+
+  // Check if post is saved by current user
+  const [isSaved, setIsSaved] = useState(
+    item?.savedByUsers?.includes(user?._id)
+  );
 
   const handlwShowComments = () => setShowComments(!showComments);
 
@@ -53,11 +61,22 @@ const Post = ({ item }) => {
     setUnLiked(!unLiked);
   };
 
-  // Save
-  const [save, setSave] = useState(false);
+  // Save post handler
+  const handleSavePost = () => {
+    if (!user) return; // Don't proceed if user is not logged in
 
-  const handleSave = () => {
-    setSave(!save);
+    // Dispatch the save action
+    dispatch(savePostAction(item.id))
+      .then(() => {
+        // Toggle saved state locally for immediate feedback
+        setIsSaved(!isSaved);
+        // Optionally refresh all posts to get updated data
+        dispatch(getAllPostAction());
+        toast.success("Post saved successfully.");
+      })
+      .catch((error) => {
+        toast.error("Failed to save post:", error);
+      });
   };
 
   const [open, setOpen] = useState(false);
@@ -77,6 +96,14 @@ const Post = ({ item }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Update the isSaved state when posts are refreshed
+  useEffect(() => {
+    // Update saved state if item changes (e.g. after getAllPostAction)
+    if (item?.savedByUsers) {
+      setIsSaved(item.savedByUsers.includes(user?._id));
+    }
+  }, [item, user]);
 
   // Edit and Delete
   const [showDelete, setShowDelete] = useState(false);
@@ -101,7 +128,7 @@ const Post = ({ item }) => {
       .catch((error) => console.error("Error updating post:", error));
   };
 
-  // Write comment - improved function
+  // Write comment
   const handleCreateComment = () => {
     if (!commentText.trim()) return; // Don't submit empty comments
 
@@ -295,17 +322,7 @@ const Post = ({ item }) => {
             ) : (
               <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
             )}
-            {/* <span className={liked ? 'text-blue-500' : ''}>{likeCount}</span> */}
-
-            {/* <img
-              src="/like.png"
-              alt="Like"
-              width={16}
-              height={16}
-              className={liked ? "text-blue-600" : ""}
-            /> */}
             <span className="text-gray-500">{likes}</span>
-            {/* <span className="text-gray-300">|</span> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
@@ -324,13 +341,6 @@ const Post = ({ item }) => {
                 sx={{ color: blue[500] }}
               />
             )}
-            {/* <img
-              src="/like.png"
-              alt="Dislike"
-              width={16}
-              height={16}
-              className="cursor-pointer rotate-180"
-            /> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl"
@@ -360,9 +370,9 @@ const Post = ({ item }) => {
           <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
             <div
               className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl cursor-pointer"
-              onClick={handleSave}
+              onClick={handleSavePost} // Updated to use our new handler
             >
-              {save ? (
+              {isSaved ? (
                 <TurnedInRoundedIcon
                   fontSize="small"
                   sx={{ color: blue[500] }}
@@ -373,21 +383,7 @@ const Post = ({ item }) => {
                   sx={{ color: blue[500] }}
                 />
               )}
-              {/* <img
-              src="/like.png"
-              alt="Dislike"
-              width={16}
-              height={16}
-              className="cursor-pointer rotate-180"
-            /> */}
             </div>
-            {/* <img
-              src="/save.png"
-              alt="Share"
-              width={16}
-              height={16}
-              className="cursor-pointer"
-            /> */}
           </div>
         </div>
       </div>
