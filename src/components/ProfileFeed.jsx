@@ -19,7 +19,7 @@ const ProfileFeed = ({ type, userId }) => {
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
       {loading && <p>Loading posts...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {/* {error && <p className="text-red-500">{error}</p>} */}
 
       {userPosts && userPosts.length > 0 ? (
         userPosts.map((post) => <Post key={post._id} item={post} />)
