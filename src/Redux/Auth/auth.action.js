@@ -27,13 +27,13 @@ export const loginUserAction = (loginData) => async (dispatch) => {
     if (data.token) {
       // Store JWT in localStorage for persistence across refreshes
       localStorage.setItem("jwt", data.token);
-      
+
       // Update Redux state
       dispatch({ type: LOGIN_SUCCESS, payload: data.token });
-      
+
       // Optionally, fetch user profile after successful login
       dispatch(getProfileAction(data.token));
-      
+
       return true;
     } else {
       throw new Error("JWT token not received.");
@@ -45,7 +45,7 @@ export const loginUserAction = (loginData) => async (dispatch) => {
       type: LOGIN_FAILURE,
       payload: error.response?.data?.message || error.message || "Login failed",
     });
-    
+
     return false;
   }
 };

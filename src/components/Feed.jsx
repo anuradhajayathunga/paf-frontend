@@ -14,7 +14,9 @@ const Feed = ({ type }) => {
 
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
+      {/* Uncomment this if you want to show ProfileCard on profile page */}
       {/* {type === "profile" && <ProfileCard />} */}
+
       {type === "home"}
       {post?.posts?.map((item, index) => (
         <div

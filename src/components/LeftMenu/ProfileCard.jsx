@@ -25,7 +25,7 @@ const ProfileCard = () => {
 
       {/* User Info */}
       <div className="pt-8 flex flex-col items-center gap-2">
-        <span className="font-semibold text-gray-800">
+        <span className="font-semibold text-gray-800 capitalize">
           {auth.user?.fname} {auth.user?.lname}
         </span>
 

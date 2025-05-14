@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
+import { toast } from "react-toastify";
 
 const initialValues = { fname: "", lname: "", email: "", password: "" };
 
@@ -26,9 +27,15 @@ const Registration = () => {
 
   const handleSubmit = (values) => {
     console.log("handleSubmit", values);
-    const success = dispatch(registerUserAction(values));
-    if (success) {
-      navigate("/login");
+    try {
+      const success = dispatch(registerUserAction(values));
+      if (success) {
+        navigate("/login");
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      toast.error("Something went wrong during login.");
     }
   };
 
