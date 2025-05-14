@@ -12,7 +12,7 @@ const Navbar = () => {
 
   // Get auth state from Redux
   const { loading, error, jwt, user } = useSelector((state) => state.auth);
-  
+
   // Check authentication status properly
   const isAuthenticated = Boolean(jwt || localStorage.getItem("jwt"));
 
@@ -28,11 +28,17 @@ const Navbar = () => {
   }, []);
 
   // Handle logout process
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     setShowMenu(false); // Close the menu after logout
-    const success=await dispatch(logoutUserAction());
-    if (success) {  
-      navigate("/login");
+    const success = await dispatch(logoutUserAction());
+    if (success) {
+      // Optional: Clear localStorage/sessionStorage if used
+      localStorage.clear();
+      sessionStorage.clear();
+
+      // Redirect to login and refresh page to clear in-memory state
+      window.location.href = "/login"; // This both redirects and reloads the app
+      // navigate("/login");
     }
   };
   return (
@@ -108,59 +114,60 @@ const Navbar = () => {
         >
           {isAuthenticated ? (
             <>
-              <img 
-                src={user?.avatar  || "/login.png"} 
-                alt="Profile" 
+              <img
+                src={user?.avatar || "/login.png"}
+                alt="Profile"
                 className="w-8 h-8 rounded-full object-cover"
               />
               {/* <span className="hidden md:inline">{user?.fname || "User"}</span> */}
             </>
           ) : (
             <>
-            <Link
-                  to="/login"
-                  aria-current="page"
-                  className="router-link-active router-link-exact-active flex items-center z-10 relative transition-all duration-200 group px-[22px] py-[15px] lg:px-[32px] lg:py-[22px] rounded-[50px] bg-gray-100 text-gray-900 hover:bg-c-green-300"
-                >
-                  <span className="block text-inherit w-full h-full rounded-[50px] text-md font-bold font-chivo group-hover:text-blue">
-                    Log in
-                  </span>
-                 
-                </Link>
-              
+              <Link
+                to="/login"
+                aria-current="page"
+                className="router-link-active router-link-exact-active flex items-center z-10 relative transition-all duration-200 group px-[22px] py-[15px] lg:px-[32px] lg:py-[22px] rounded-[50px] bg-gray-100 text-gray-900 hover:bg-c-green-300"
+              >
+                <span className="block text-inherit w-full h-full rounded-[50px] text-md font-bold font-chivo group-hover:text-blue">
+                  Log in
+                </span>
+              </Link>
             </>
           )}
         </button>
 
-        {showMenu && isAuthenticated &&(
+        {showMenu && isAuthenticated && (
           <div className="absolute top-14 right-0 w-44 bg-white shadow-lg border rounded-md text-sm z-50">
-              <>
-                <Link
-                  to={`/profile/${user?.id}`}
-                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Profile
-                </Link>
-                <Link
-                  to="/settings"
-                  className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
-                  onClick={() => setShowMenu(false)}
-                >
-                  Settings
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
-                >
-                  Logout
-                </button>
-              </>
+            <>
+              <Link
+                to={`/profile/${user?.id}`}
+                className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                onClick={() => setShowMenu(false)}
+              >
+                Profile
+              </Link>
+              <Link
+                to="/settings"
+                className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
+                onClick={() => setShowMenu(false)}
+              >
+                Settings
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+              >
+                Logout
+              </button>
+            </>
           </div>
         )}
 
         <div className="md:hidden">
-          <MobileMenu isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+          <MobileMenu
+            isAuthenticated={isAuthenticated}
+            handleLogout={handleLogout}
+          />
         </div>
       </div>
     </header>

@@ -18,6 +18,11 @@ import {
   UPDATE_PROFILE_SUCCESS,
 } from "./auth.actionType";
 
+const reloadApp = () => {
+  window.location.reload(); // Reloads the current page
+};
+
+
 // Login Action
 export const loginUserAction = (loginData) => async (dispatch) => {
   dispatch({ type: LOGIN_REQUEST });
@@ -33,6 +38,9 @@ export const loginUserAction = (loginData) => async (dispatch) => {
 
       // Optionally, fetch user profile after successful login
       dispatch(getProfileAction(data.token));
+
+      // Reload the app to reflect logged-in state
+      reloadApp();
 
       return true;
     } else {
@@ -61,7 +69,7 @@ export const registerUserAction = (registerData) => async (dispatch) => {
     );
 
     if (data.token) {
-      localStorage.setItem("jwt", data.token);
+      // localStorage.setItem("jwt", data.token);
       dispatch({ type: REGISTER_SUCCESS, payload: data.token });
       // navigate("/login"); // Redirect to login page after successful registration
     } else {
