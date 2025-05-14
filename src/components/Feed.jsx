@@ -12,18 +12,23 @@ const Feed = ({ type }) => {
     dispatch(getAllPostAction());
   }, [dispatch]);
 
+  // ✅ Sort posts by updatedAt descending
+  const sortedPosts = [...(post?.posts || [])].sort((a, b) => {
+    return new Date(b.updatedAt) - new Date(a.updatedAt);
+  });
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
       {/* Uncomment this if you want to show ProfileCard on profile page */}
       {/* {type === "profile" && <ProfileCard />} */}
 
       {type === "home"}
-      {post?.posts?.map((item, index) => (
+      {sortedPosts.map((item, index) => (
         <div
           key={index}
           className={`border-b ${
-            index === post?.posts?.length - 1 ? "border-none" : ""
-          } pb-6`}
+            index === sortedPosts.length - 1 ? "border-none" : ""
+          } pb-2`}
         >
           <Post item={item} />
         </div>
