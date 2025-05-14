@@ -21,6 +21,15 @@ import {
   UPDATE_POST_FAILURE,
   UPDATE_POST_REQUEST,
   UPDATE_POST_SUCCESS,
+  SAVE_POST_REQUEST,
+  SAVE_POST_SUCCESS,
+  SAVE_POST_FAILURE,
+  GET_SAVED_POSTS_REQUEST,
+  GET_SAVED_POSTS_SUCCESS,
+  GET_SAVED_POSTS_FAILURE,
+  REMOVE_SAVED_POST_REQUEST,
+  REMOVE_SAVED_POST_SUCCESS,
+  REMOVE_SAVED_POST_FAILURE,
 } from "./post.actionType";
 
 export const createPostAction = (postData) => async (dispatch) => {
@@ -128,6 +137,84 @@ export const deletePostAction = (postId) => async (dispatch) => {
         "Something went wrong",
     });
     console.error("Error deleting post", error);
+  }
+};
+
+// export const savePostAction = (postId) => async (dispatch) => {
+//   dispatch({ type: SAVE_POST_REQUEST });
+//   try {
+//     const { data } = await api.put(`/post/save/${postId}`);
+//     dispatch({ type: SAVE_POST_SUCCESS, payload: data });
+//     console.log("Save post -->", data);
+//   } catch (error) {
+//     dispatch({
+//       type: SAVE_POST_FAILURE,
+//       payload:
+//         error.response?.data?.message ||
+//         error.message ||
+//         "Something went wrong",
+//     });
+//     console.error("Error saving post -->", error);
+//   }
+// };
+
+// ✅ Save a post for the authenticated user
+export const savePostAction = (postId) => async (dispatch) => {
+  dispatch({ type: SAVE_POST_REQUEST });
+
+  try {
+    const { data } = await api.post(`/api/user/save-post/${postId}`);
+    dispatch({ type: SAVE_POST_SUCCESS, payload: data });
+    console.log("Post saved successfully -->", data);
+  } catch (error) {
+    console.error("Error saving post -->", error);
+    dispatch({
+      type: SAVE_POST_FAILURE,
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
+  }
+};
+
+// ✅ Remove a post from saved posts
+export const removeSavedPostAction = (postId) => async (dispatch) => {
+  dispatch({ type: REMOVE_SAVED_POST_REQUEST });
+
+  try {
+    const { data } = await api.delete(`/api/user/remove-saved-post/${postId}`);
+    dispatch({ type: REMOVE_SAVED_POST_SUCCESS, payload: postId });
+    console.log("Post removed from saved list -->", data);
+  } catch (error) {
+    console.error("Error removing saved post -->", error);
+    dispatch({
+      type: REMOVE_SAVED_POST_FAILURE,
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
+  }
+};
+
+// ✅ Get all saved posts for the authenticated user
+export const getSavedPostsAction = () => async (dispatch) => {
+  dispatch({ type: GET_SAVED_POSTS_REQUEST });
+
+  try {
+    const { data } = await api.get(`/api/user/saved-posts`);
+    dispatch({ type: GET_SAVED_POSTS_SUCCESS, payload: data });
+    console.log("Saved posts fetched -->", data);
+  } catch (error) {
+    console.error("Error fetching saved posts -->", error);
+    dispatch({
+      type: GET_SAVED_POSTS_FAILURE,
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
   }
 };
 

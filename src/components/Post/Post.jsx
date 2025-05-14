@@ -18,20 +18,31 @@ import {
   deletePostAction,
   getAllPostAction,
   updatePostAction,
+  savePostAction,
+  removeSavedPostAction,
 } from "../../Redux/Post/post.action";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
 import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
+import { toast } from "react-toastify";
+
 const Post = ({ item }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
-  const [commentText, setCommentText] = useState(""); // State to manage comment input
-  const { auth } = useSelector((store) => store);
+  const [commentText, setCommentText] = useState("");
+  const { auth, post } = useSelector((store) => store);
   const user = auth?.user;
   const isOwner = user?.id === item?.user?.id;
+
+  // Fix: Check if post is saved by current user using the correct property
+  // Also ensure we're checking for the correct ID type (_id vs id)
+  const [isSaved, setIsSaved] = useState(
+    item?.savedByUsers?.includes(user?._id)
+  );
+  const [saving, setSaving] = useState(false);
 
   const handlwShowComments = () => setShowComments(!showComments);
 
@@ -53,11 +64,35 @@ const Post = ({ item }) => {
     setUnLiked(!unLiked);
   };
 
-  // Save
-  const [save, setSave] = useState(false);
+  // Save post handler - Fixed implementation
+  const handleSavePost = async () => {
+    if (!user || saving) return;
 
-  const handleSave = () => {
-    setSave(!save);
+    setSaving(true);
+
+    try {
+      if (isSaved) {
+        // Fix: Make sure we're passing the correct ID format
+        await dispatch(removeSavedPostAction(item.id));
+        toast.success("Removed from saved posts.");
+      } else {
+        // Fix: Make sure we're passing the correct ID format
+        await dispatch(savePostAction(item.id));
+        toast.success("Post saved.");
+      }
+
+      // Toggle UI state immediately to improve perceived performance
+      setIsSaved((prev) => !prev);
+
+      // Fetch all posts to update the state in Redux store
+      // This is important to ensure our UI correctly reflects the backend state
+      await dispatch(getAllPostAction());
+    } catch (error) {
+      toast.error("Failed to update saved state.");
+      console.error("Save/Unsave error:", error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const [open, setOpen] = useState(false);
@@ -78,6 +113,13 @@ const Post = ({ item }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fix: Update the isSaved state whenever item changes
+  useEffect(() => {
+    if (item?.savedByUsers && user?._id) {
+      setIsSaved(item.savedByUsers.includes(user._id));
+    }
+  }, [item, user]);
+
   // Edit and Delete
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -86,27 +128,46 @@ const Post = ({ item }) => {
   const handleEdit = () => setShowEdit(true);
 
   const confirmDelete = () => {
-    dispatch(deletePostAction(item.id))
-      .then(() => dispatch(getAllPostAction()))
-      .catch((error) => console.error("Error deleting post:", error));
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
+    dispatch(deletePostAction(postId))
+      .then(() => {
+        dispatch(getAllPostAction());
+        toast.success("Post deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting post:", error);
+        toast.error("Failed to delete post");
+      });
     setShowDelete(false);
   };
 
   const saveEdit = (updatedPost) => {
-    dispatch(updatePostAction(updatedPost.id, updatedPost))
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
+    dispatch(updatePostAction(postId, updatedPost))
       .then(() => {
         setShowEdit(false);
         dispatch(getAllPostAction());
+        toast.success("Post updated successfully");
       })
-      .catch((error) => console.error("Error updating post:", error));
+      .catch((error) => {
+        console.error("Error updating post:", error);
+        toast.error("Failed to update post");
+      });
   };
 
-  // Write comment - improved function
+  // Write comment
   const handleCreateComment = () => {
     if (!commentText.trim()) return; // Don't submit empty comments
 
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
     const reqData = {
-      postId: item.id,
+      postId: postId,
       data: {
         comment: commentText,
       },
@@ -119,9 +180,11 @@ const Post = ({ item }) => {
         dispatch(getAllPostAction());
         // Clear the input field
         setCommentText("");
+        toast.success("Comment added successfully");
       })
       .catch((error) => {
         console.error("Failed to create comment:", error);
+        toast.error("Failed to add comment");
       });
   };
 
@@ -295,17 +358,7 @@ const Post = ({ item }) => {
             ) : (
               <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
             )}
-            {/* <span className={liked ? 'text-blue-500' : ''}>{likeCount}</span> */}
-
-            {/* <img
-              src="/like.png"
-              alt="Like"
-              width={16}
-              height={16}
-              className={liked ? "text-blue-600" : ""}
-            /> */}
             <span className="text-gray-500">{likes}</span>
-            {/* <span className="text-gray-300">|</span> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
@@ -324,13 +377,6 @@ const Post = ({ item }) => {
                 sx={{ color: blue[500] }}
               />
             )}
-            {/* <img
-              src="/like.png"
-              alt="Dislike"
-              width={16}
-              height={16}
-              className="cursor-pointer rotate-180"
-            /> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl"
@@ -357,37 +403,36 @@ const Post = ({ item }) => {
             />
             <span className="text-gray-400">share</span>
           </div>
+          {/* Fixed Save Button */}
           <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
             <div
-              className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl cursor-pointer"
-              onClick={handleSave}
+              className={`flex items-center gap-1 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer ${
+                saving ? "opacity-50 pointer-events-none" : ""
+              }`}
+              onClick={handleSavePost}
             >
-              {save ? (
-                <TurnedInRoundedIcon
-                  fontSize="small"
-                  sx={{ color: blue[500] }}
-                />
+              {saving ? (
+                <div className="text-sm text-blue-500 animate-pulse">
+                  Saving...
+                </div>
+              ) : isSaved ? (
+                <>
+                  <TurnedInRoundedIcon
+                    fontSize="small"
+                    sx={{ color: blue[500] }}
+                  />
+                  <span className="text-blue-500 text-sm">Saved</span>
+                </>
               ) : (
-                <TurnedInNotRoundedIcon
-                  fontSize="small"
-                  sx={{ color: blue[500] }}
-                />
+                <>
+                  <TurnedInNotRoundedIcon
+                    fontSize="small"
+                    sx={{ color: blue[500] }}
+                  />
+                  <span className="text-blue-500 text-sm">Save</span>
+                </>
               )}
-              {/* <img
-              src="/like.png"
-              alt="Dislike"
-              width={16}
-              height={16}
-              className="cursor-pointer rotate-180"
-            /> */}
             </div>
-            {/* <img
-              src="/save.png"
-              alt="Share"
-              width={16}
-              height={16}
-              className="cursor-pointer"
-            /> */}
           </div>
         </div>
       </div>
@@ -397,7 +442,7 @@ const Post = ({ item }) => {
         <>
           <div className="flex items-start gap-4">
             <img
-              src={item?.user?.avatar || "/assets/avatars/def.jpeg"}
+              src={user?.avatar || "/assets/avatars/def.jpeg"}
               alt="User Avatar"
               width={32}
               height={32}
