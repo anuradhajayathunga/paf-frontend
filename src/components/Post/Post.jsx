@@ -12,20 +12,26 @@ import "swiper/css";
 import "swiper/css/navigation";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createCommetAction,
   deletePostAction,
   getAllPostAction,
   updatePostAction,
 } from "../../Redux/Post/post.action";
-
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
+import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
 const Post = ({ item }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState(""); // State to manage comment input
+  const { auth } = useSelector((store) => store);
+  const user = auth?.user;
+  const isOwner = user?.id === item?.user?.id;
 
   const handlwShowComments = () => setShowComments(!showComments);
 
@@ -36,6 +42,22 @@ const Post = ({ item }) => {
   const handleLike = () => {
     setLikes(likes + (liked ? -1 : 1));
     setLiked(!liked);
+  };
+
+  // UnLike
+  const [unLikes, setUnLikes] = useState(1000); // Assuming 1K likes initially
+  const [unLiked, setUnLiked] = useState(false);
+
+  const handleUnLike = () => {
+    setUnLikes(unLikes + (unLiked ? -1 : 1));
+    setUnLiked(!unLiked);
+  };
+
+  // Save
+  const [save, setSave] = useState(false);
+
+  const handleSave = () => {
+    setSave(!save);
   };
 
   const [open, setOpen] = useState(false);
@@ -155,7 +177,7 @@ const Post = ({ item }) => {
             />
           </button>
 
-          {open && (
+          {open && isOwner && (
             <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
               <button
                 onClick={handleEdit}
@@ -184,6 +206,11 @@ const Post = ({ item }) => {
                 onSave={saveEdit}
                 initialData={item}
               />
+            </div>
+          )}
+          {open && !isOwner && (
+            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-xl shadow-xl z-50 p-3 text-sm text-gray-500">
+              No permission to edit.
             </div>
           )}
         </div>
@@ -258,27 +285,52 @@ const Post = ({ item }) => {
 
       {/* INTERACTION */}
       <div className="flex items-center justify-between text-sm my-2">
-        <div className="flex gap-8">
+        <div className="flex gap-2">
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
             onClick={handleLike}
           >
-            <img
+            {liked ? (
+              <ThumbUpIcon fontSize="small" sx={{ color: blue[500] }} />
+            ) : (
+              <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
+            )}
+            {/* <span className={liked ? 'text-blue-500' : ''}>{likeCount}</span> */}
+
+            {/* <img
               src="/like.png"
               alt="Like"
               width={16}
               height={16}
               className={liked ? "text-blue-600" : ""}
-            />
+            /> */}
             <span className="text-gray-500">{likes}</span>
-            <span className="text-gray-300">|</span>
-            <img
+            {/* <span className="text-gray-300">|</span> */}
+          </div>
+          <div
+            className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
+            onClick={handleUnLike}
+          >
+            {unLiked ? (
+              <ThumbUpIcon
+                className="cursor-pointer rotate-180"
+                fontSize="small"
+                sx={{ color: blue[500] }}
+              />
+            ) : (
+              <ThumbUpOutlinedIcon
+                className="cursor-pointer rotate-180"
+                fontSize="small"
+                sx={{ color: blue[500] }}
+              />
+            )}
+            {/* <img
               src="/like.png"
               alt="Dislike"
               width={16}
               height={16}
               className="cursor-pointer rotate-180"
-            />
+            /> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl"
@@ -294,8 +346,8 @@ const Post = ({ item }) => {
             <span className="text-gray-500 cursor-pointer">200</span>
           </div>
         </div>
-        <div>
-          <div className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl">
+        <div className="flex gap-4">
+          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
             <img
               src="/share.png"
               alt="Share"
@@ -304,6 +356,38 @@ const Post = ({ item }) => {
               className="cursor-pointer"
             />
             <span className="text-gray-400">share</span>
+          </div>
+          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+            <div
+              className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl cursor-pointer"
+              onClick={handleSave}
+            >
+              {save ? (
+                <TurnedInRoundedIcon
+                  fontSize="small"
+                  sx={{ color: blue[500] }}
+                />
+              ) : (
+                <TurnedInNotRoundedIcon
+                  fontSize="small"
+                  sx={{ color: blue[500] }}
+                />
+              )}
+              {/* <img
+              src="/like.png"
+              alt="Dislike"
+              width={16}
+              height={16}
+              className="cursor-pointer rotate-180"
+            /> */}
+            </div>
+            {/* <img
+              src="/save.png"
+              alt="Share"
+              width={16}
+              height={16}
+              className="cursor-pointer"
+            /> */}
           </div>
         </div>
       </div>

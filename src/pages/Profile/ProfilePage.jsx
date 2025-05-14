@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
-import Feed from "../../components/Feed";
+import ProfileFeed from "../../components/ProfileFeed";
 // import LeftMenu from "../../components/LeftMenu/LeftMenu";
 import RightMenu from "../../components/RightMenu/RightMenu";
 import UpdateImageModal from "./UpdateImageModal";
@@ -26,9 +26,9 @@ const ProfilePage = () => {
   return (
     <div className="flex flex-col lg:flex-row gap-4 pt-4 px-4  mx-auto">
       {/* Left Sidebar */}
-      <aside className="hidden xl:block w-[10%]">
-        {/* <LeftMenu type="profile" /> */}
-      </aside>
+      {/* <aside className="hidden xl:block w-[10%]">
+        <LeftMenu type="profile" />
+      </aside> */}
 
       {/* Center Content */}
       <main className="w-full lg:w-[70%] xl:w-[70%] flex flex-col gap-6">
@@ -71,7 +71,7 @@ const ProfilePage = () => {
               </button>
             </div>
             <h1 className="mt-4 text-xl md:text-2xl font-semibold text-gray-900 capitalize">
-              {auth.user?.fname} {auth.user?.lname}
+              {auth.user?.fname} {auth.user?.lname} 
             </h1>
             <div className="flex gap-12 mt-4 text-center">
               <div>
@@ -97,7 +97,7 @@ const ProfilePage = () => {
         </section>
 
         {/* Feed Section */}
-        <Feed />
+        <ProfileFeed type="profile" userId={user?.id} />
       </main>
 
       {/* Right Sidebar */}

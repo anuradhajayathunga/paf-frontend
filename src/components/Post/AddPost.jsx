@@ -11,7 +11,7 @@ const AddPost = () => {
   const [openPostModal, setOpenPostModal] = useState(false);
 
   const handleOptionClick = (label) => {
-    if (label === "Photo") {
+    if (label === "Post" ) {
       setOpenPostModal(true);
     }
     // Handle other types if needed
