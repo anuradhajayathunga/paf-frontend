@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 const initialValues = { fname: "", lname: "", email: "", password: "" };
 
 const validationSchema = Yup.object({
-  // fname: Yup.string().required("First name is required"),
+  fname: Yup.string().required("First name is required"),
   // lname: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()

@@ -20,6 +20,9 @@ import {
   GET_POST_BY_USERID_REQUEST,
   GET_POST_BY_USERID_SUCCESS,
   GET_POST_BY_USERID_FAILURE,
+  SAVE_POST_FAILURE,
+  SAVE_POST_SUCCESS,
+  SAVE_POST_REQUEST,
 } from "./post.actionType";
 
 const initialState = {
@@ -41,6 +44,7 @@ export const postReducer = (state = initialState, action) => {
     case LIKE_POST_REQUEST:
     case UPDATE_POST_REQUEST:
     case DELETE_POST_REQUEST:
+    case SAVE_POST_REQUEST:
       return {
         ...state,
         error: null,
@@ -88,9 +92,20 @@ export const postReducer = (state = initialState, action) => {
     case CREATE_COMMENT_SUCCESS:
       return { loading: false, comment: action.payload, error: null };
 
+    case SAVE_POST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        posts: state.posts.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        ),
+      };
+
     case ADD_POST_FAILURE:
     case GET_ALL_POST_FAILURE:
     case GET_POST_BY_USERID_FAILURE:
+    case SAVE_POST_FAILURE:
     case LIKE_POST_FAILURE:
     case UPDATE_POST_FAILURE:
     case DELETE_POST_FAILURE:
