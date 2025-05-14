@@ -389,7 +389,7 @@ const Post = ({ item }) => {
               height={16}
               className="cursor-pointer"
             />
-            <span className="text-gray-500 cursor-pointer">200</span>
+            <span className="text-gray-500 cursor-pointer"> {item.comments.length}</span>
           </div>
         </div>
         <div className="flex gap-4">

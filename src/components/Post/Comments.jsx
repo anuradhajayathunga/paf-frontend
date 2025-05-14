@@ -15,6 +15,11 @@ const Comments = ({ item }) => {
     );
   }
 
+  // ✅ Sort posts by updatedAt descending
+  const sortedPosts = [...(item?.comments || [])].sort((a, b) => {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   return (
     <div className="flex flex-col gap-6 mt-2 py-4">
       {/* Comment count and sorting options */}
@@ -32,7 +37,7 @@ const Comments = ({ item }) => {
       </div>
 
       {/* Comments list */}
-      {item.comments.map((comment, index) => (
+      {sortedPosts.map((comment, index) => (
         <CommentItem key={comment.id || index} comment={comment} />
       ))}
     </div>
