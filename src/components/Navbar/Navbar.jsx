@@ -109,7 +109,7 @@ const Navbar = () => {
           {isAuthenticated ? (
             <>
               <img 
-                src={user?.avatar || "/login.png"} 
+                src={user?.avatar || "/assets/avatars/def.jpeg"} 
                 alt="Profile" 
                 className="w-8 h-8 rounded-full object-cover"
               />
@@ -128,7 +128,7 @@ const Navbar = () => {
             {isAuthenticated ? (
               <>
                 <Link
-                  to="/profile"
+                  to={`/profile/${user?.id}`}
                   className="block px-4 py-2 hover:bg-gray-100 text-gray-700"
                   onClick={() => setShowMenu(false)}
                 >

@@ -10,12 +10,12 @@ const ProfileCard = () => {
       {/* Cover + Avatar */}
       <div className="relative h-32">
         <img
-          src={user?.cover || "/noCover.png"}
+          src={user?.cover || "/assets/avatars/def.jpeg"}
           alt="Cover"
           className="rounded-md object-cover w-full h-full"
         />
         <img
-          src={user?.avatar || "/noAvatar.png"}
+          src={user?.avatar || "/assets/cover/def.jpeg"}
           alt="Avatar"
           width={48}
           height={48}
@@ -47,8 +47,7 @@ const ProfileCard = () => {
         </div>
 
         {/* Profile Link */}
-        <Link to={`/profile/
-          ${auth.user?.id}`}>
+        <Link to={`/profile/${user?.id}`}>
           <button className="mt-2 bg-blue-500 hover:bg-blue-600 transition text-white text-xs px-4 py-1.5 rounded-md">
             My Profile
           </button>
