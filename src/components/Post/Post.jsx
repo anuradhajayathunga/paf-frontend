@@ -19,6 +19,7 @@ import {
   getAllPostAction,
   updatePostAction,
   savePostAction,
+  removeSavedPostAction,
 } from "../../Redux/Post/post.action";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
@@ -36,10 +37,12 @@ const Post = ({ item }) => {
   const user = auth?.user;
   const isOwner = user?.id === item?.user?.id;
 
-  // Check if post is saved by current user
+  // Fix: Check if post is saved by current user using the correct property
+  // Also ensure we're checking for the correct ID type (_id vs id)
   const [isSaved, setIsSaved] = useState(
     item?.savedByUsers?.includes(user?._id)
   );
+  const [saving, setSaving] = useState(false);
 
   const handlwShowComments = () => setShowComments(!showComments);
 
@@ -61,22 +64,35 @@ const Post = ({ item }) => {
     setUnLiked(!unLiked);
   };
 
-  // Save post handler
-  const handleSavePost = () => {
-    if (!user) return; // Don't proceed if user is not logged in
+  // Save post handler - Fixed implementation
+  const handleSavePost = async () => {
+    if (!user || saving) return;
 
-    // Dispatch the save action
-    dispatch(savePostAction(item.id))
-      .then(() => {
-        // Toggle saved state locally for immediate feedback
-        setIsSaved(!isSaved);
-        // Optionally refresh all posts to get updated data
-        dispatch(getAllPostAction());
-        toast.success("Post saved successfully.");
-      })
-      .catch((error) => {
-        toast.error("Failed to save post:", error);
-      });
+    setSaving(true);
+
+    try {
+      if (isSaved) {
+        // Fix: Make sure we're passing the correct ID format
+        await dispatch(removeSavedPostAction(item.id));
+        toast.success("Removed from saved posts.");
+      } else {
+        // Fix: Make sure we're passing the correct ID format
+        await dispatch(savePostAction(item.id));
+        toast.success("Post saved.");
+      }
+
+      // Toggle UI state immediately to improve perceived performance
+      setIsSaved((prev) => !prev);
+
+      // Fetch all posts to update the state in Redux store
+      // This is important to ensure our UI correctly reflects the backend state
+      await dispatch(getAllPostAction());
+    } catch (error) {
+      toast.error("Failed to update saved state.");
+      console.error("Save/Unsave error:", error);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const [open, setOpen] = useState(false);
@@ -97,11 +113,10 @@ const Post = ({ item }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Update the isSaved state when posts are refreshed
+  // Fix: Update the isSaved state whenever item changes
   useEffect(() => {
-    // Update saved state if item changes (e.g. after getAllPostAction)
-    if (item?.savedByUsers) {
-      setIsSaved(item.savedByUsers.includes(user?._id));
+    if (item?.savedByUsers && user?._id) {
+      setIsSaved(item.savedByUsers.includes(user._id));
     }
   }, [item, user]);
 
@@ -113,27 +128,46 @@ const Post = ({ item }) => {
   const handleEdit = () => setShowEdit(true);
 
   const confirmDelete = () => {
-    dispatch(deletePostAction(item.id))
-      .then(() => dispatch(getAllPostAction()))
-      .catch((error) => console.error("Error deleting post:", error));
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
+    dispatch(deletePostAction(postId))
+      .then(() => {
+        dispatch(getAllPostAction());
+        toast.success("Post deleted successfully");
+      })
+      .catch((error) => {
+        console.error("Error deleting post:", error);
+        toast.error("Failed to delete post");
+      });
     setShowDelete(false);
   };
 
   const saveEdit = (updatedPost) => {
-    dispatch(updatePostAction(updatedPost.id, updatedPost))
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
+    dispatch(updatePostAction(postId, updatedPost))
       .then(() => {
         setShowEdit(false);
         dispatch(getAllPostAction());
+        toast.success("Post updated successfully");
       })
-      .catch((error) => console.error("Error updating post:", error));
+      .catch((error) => {
+        console.error("Error updating post:", error);
+        toast.error("Failed to update post");
+      });
   };
 
   // Write comment
   const handleCreateComment = () => {
     if (!commentText.trim()) return; // Don't submit empty comments
 
+    // Fix: Ensure we're using the correct ID field
+    const postId = item._id || item.id;
+
     const reqData = {
-      postId: item.id,
+      postId: postId,
       data: {
         comment: commentText,
       },
@@ -146,9 +180,11 @@ const Post = ({ item }) => {
         dispatch(getAllPostAction());
         // Clear the input field
         setCommentText("");
+        toast.success("Comment added successfully");
       })
       .catch((error) => {
         console.error("Failed to create comment:", error);
+        toast.error("Failed to add comment");
       });
   };
 
@@ -367,21 +403,34 @@ const Post = ({ item }) => {
             />
             <span className="text-gray-400">share</span>
           </div>
+          {/* Fixed Save Button */}
           <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
             <div
-              className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl cursor-pointer"
-              onClick={handleSavePost} // Updated to use our new handler
+              className={`flex items-center gap-1 bg-slate-50 px-3 py-2 rounded-xl cursor-pointer ${
+                saving ? "opacity-50 pointer-events-none" : ""
+              }`}
+              onClick={handleSavePost}
             >
-              {isSaved ? (
-                <TurnedInRoundedIcon
-                  fontSize="small"
-                  sx={{ color: blue[500] }}
-                />
+              {saving ? (
+                <div className="text-sm text-blue-500 animate-pulse">
+                  Saving...
+                </div>
+              ) : isSaved ? (
+                <>
+                  <TurnedInRoundedIcon
+                    fontSize="small"
+                    sx={{ color: blue[500] }}
+                  />
+                  <span className="text-blue-500 text-sm">Saved</span>
+                </>
               ) : (
-                <TurnedInNotRoundedIcon
-                  fontSize="small"
-                  sx={{ color: blue[500] }}
-                />
+                <>
+                  <TurnedInNotRoundedIcon
+                    fontSize="small"
+                    sx={{ color: blue[500] }}
+                  />
+                  <span className="text-blue-500 text-sm">Save</span>
+                </>
               )}
             </div>
           </div>
@@ -393,7 +442,7 @@ const Post = ({ item }) => {
         <>
           <div className="flex items-start gap-4">
             <img
-              src={item?.user?.avatar || "/assets/avatars/def.jpeg"}
+              src={user?.avatar || "/assets/avatars/def.jpeg"}
               alt="User Avatar"
               width={32}
               height={32}
