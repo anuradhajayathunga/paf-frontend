@@ -46,7 +46,7 @@ export const getAllPostAction = () => async (dispatch) => {
   try {
     const { data } = await api.get("/posts");
     dispatch({ type: GET_ALL_POST_SUCCESS, payload: data });
-    // console.log("Posts -->", data);
+    console.log("AllPosts -->", data);
   } catch (error) {
     console.error("Error getting posts -->", error);
     dispatch({
@@ -136,7 +136,7 @@ export const createCommetAction = (reqData) => async (dispatch) => {
   dispatch({ type: CREATE_COMMENT_REQUEST });
   try {
     const { data } = await api.post(
-      `/api/comment/post/${reqData.postId}`,
+      `api/comments/post/${reqData.postId}`,
       reqData.data
     );
     dispatch({ type: CREATE_COMMENT_SUCCESS, payload: data });

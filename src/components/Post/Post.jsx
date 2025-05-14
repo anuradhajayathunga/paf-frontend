@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
-import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
-import ArrowBackIosRoundedIcon from '@mui/icons-material/ArrowBackIosRounded';
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Comments from "./Comments";
@@ -12,18 +12,27 @@ import "swiper/css";
 import "swiper/css/navigation";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   createCommetAction,
   deletePostAction,
   getAllPostAction,
   updatePostAction,
 } from "../../Redux/Post/post.action";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
+import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
 const Post = ({ item }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState(""); // State to manage comment input
+  const { auth } = useSelector((store) => store);
+  const user = auth?.user;
+  const isOwner = user?.id === item?.user?.id;
+
   const handlwShowComments = () => setShowComments(!showComments);
 
   // Like
@@ -33,6 +42,22 @@ const Post = ({ item }) => {
   const handleLike = () => {
     setLikes(likes + (liked ? -1 : 1));
     setLiked(!liked);
+  };
+
+  // UnLike
+  const [unLikes, setUnLikes] = useState(1000); // Assuming 1K likes initially
+  const [unLiked, setUnLiked] = useState(false);
+
+  const handleUnLike = () => {
+    setUnLikes(unLikes + (unLiked ? -1 : 1));
+    setUnLiked(!unLiked);
+  };
+
+  // Save
+  const [save, setSave] = useState(false);
+
+  const handleSave = () => {
+    setSave(!save);
   };
 
   const [open, setOpen] = useState(false);
@@ -61,29 +86,50 @@ const Post = ({ item }) => {
   const handleEdit = () => setShowEdit(true);
 
   const confirmDelete = () => {
-    dispatch(deletePostAction(item.id)).then(() =>
-      dispatch(getAllPostAction())
-    );
+    dispatch(deletePostAction(item.id))
+      .then(() => dispatch(getAllPostAction()))
+      .catch((error) => console.error("Error deleting post:", error));
     setShowDelete(false);
   };
 
   const saveEdit = (updatedPost) => {
-    dispatch(updatePostAction(updatedPost.id, updatedPost)).then(() => {
-      setShowEdit(false);
-      dispatch(getAllPostAction());
-    });
+    dispatch(updatePostAction(updatedPost.id, updatedPost))
+      .then(() => {
+        setShowEdit(false);
+        dispatch(getAllPostAction());
+      })
+      .catch((error) => console.error("Error updating post:", error));
   };
 
-  // write comment
+  // Write comment - improved function
   const handleCreateComment = () => {
+    if (!commentText.trim()) return; // Don't submit empty comments
+
     const reqData = {
       postId: item.id,
-      userId: item.user.id,
       data: {
-        content: "",
+        comment: commentText,
       },
     };
-    dispatch(createCommetAction(reqData));
+
+    // Dispatch the comment creation action and then refresh posts
+    dispatch(createCommetAction(reqData))
+      .then(() => {
+        // After successful comment creation, refresh the posts
+        dispatch(getAllPostAction());
+        // Clear the input field
+        setCommentText("");
+      })
+      .catch((error) => {
+        console.error("Failed to create comment:", error);
+      });
+  };
+
+  // Handle comment input keypress (Enter key)
+  const handleCommentKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleCreateComment();
+    }
   };
 
   return (
@@ -92,7 +138,7 @@ const Post = ({ item }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <img
-            src={item?.user?.avatar || "/assets/avatars/def.jpeg"} 
+            src={item?.user?.avatar || "/assets/avatars/def.jpeg"}
             alt="User Avatar"
             width={40}
             height={40}
@@ -105,6 +151,18 @@ const Post = ({ item }) => {
             </span>
             {/* Caption */}
             <p className="text-sm text-gray-500">{item?.caption}</p>
+            {/* Keywords */}
+            <div className="flex flex-wrap gap-2 mt-1">
+              <span className="text-xs text-green-600 bg-blue-100 px-2 py-1 rounded-full">
+                #{item?.keywords}
+              </span>
+              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                #foodie
+              </span>
+              <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+                #photography
+              </span>
+            </div>
           </div>
         </div>
 
@@ -119,7 +177,7 @@ const Post = ({ item }) => {
             />
           </button>
 
-          {open && (
+          {open && isOwner && (
             <div className="absolute right-0 mt-2 w-44 bg-white border border-gray-200 rounded-xl shadow-xl z-50">
               <button
                 onClick={handleEdit}
@@ -150,6 +208,11 @@ const Post = ({ item }) => {
               />
             </div>
           )}
+          {open && !isOwner && (
+            <div className="absolute right-0 mt-2 w-44 bg-white border rounded-xl shadow-xl z-50 p-3 text-sm text-gray-500">
+              No permission to edit.
+            </div>
+          )}
         </div>
       </div>
 
@@ -162,11 +225,6 @@ const Post = ({ item }) => {
               ref={prevRef}
               className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
             >
-              {/* <img
-                src="assets/images/icons/icon-prev.svg"
-                alt="Previous"
-                className="w-6 h-6"
-              /> */}
               <ArrowBackIosRoundedIcon />
             </button>
           </div>
@@ -176,11 +234,6 @@ const Post = ({ item }) => {
               ref={nextRef}
               className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
             >
-              {/* <img
-                src="assets/images/icons/icon-next.svg"
-                alt="Next"
-                className="w-6 h-6 "
-              /> */}
               <ArrowForwardIosRoundedIcon />
             </button>
           </div>
@@ -189,9 +242,6 @@ const Post = ({ item }) => {
           <div className="w-full max-h-[800px] relative overflow-hidden rounded-md bg-white">
             <Swiper
               modules={[Navigation, Autoplay]}
-              // autoplay={{ delay: 4000 }}
-              // duration={4000}
-              // speed={4000}
               spaceBetween={30}
               slidesPerView={1}
               loop={true}
@@ -208,14 +258,14 @@ const Post = ({ item }) => {
             >
               {item?.img && (
                 <SwiperSlide>
-                <div className="w-full h-[600px] flex items-center justify-center bg-white">
-                  <img
-                    src={item.img}
-                    alt="Post Image"
-                    className="object-contain max-h-full max-w-full"
-                  />
-                </div>
-              </SwiperSlide>
+                  <div className="w-full h-[600px] flex items-center justify-center bg-white">
+                    <img
+                      src={item.img}
+                      alt="Post Image"
+                      className="object-contain max-h-full max-w-full"
+                    />
+                  </div>
+                </SwiperSlide>
               )}
               {item?.video && (
                 <SwiperSlide>
@@ -226,49 +276,61 @@ const Post = ({ item }) => {
                     autoPlay={true}
                     className="w-full h-auto max-h-[600px] rounded-lg object-contain"
                   />
-                  
                 </SwiperSlide>
               )}
             </Swiper>
           </div>
         </div>
-        {/* Keywords */}
-        <div className="flex flex-wrap gap-2 mt-1">
-          <span className="text-xs text-green-600 bg-blue-100 px-2 py-1 rounded-full">
-            {/* #travel */} #{item?.keywords}
-          </span>
-          <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-            #foodie
-          </span>
-          <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
-            #photography
-          </span>
-        </div>
       </div>
 
       {/* INTERACTION */}
       <div className="flex items-center justify-between text-sm my-2">
-        <div className="flex gap-8">
+        <div className="flex gap-2">
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
             onClick={handleLike}
           >
-            <img
+            {liked ? (
+              <ThumbUpIcon fontSize="small" sx={{ color: blue[500] }} />
+            ) : (
+              <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
+            )}
+            {/* <span className={liked ? 'text-blue-500' : ''}>{likeCount}</span> */}
+
+            {/* <img
               src="/like.png"
               alt="Like"
               width={16}
               height={16}
               className={liked ? "text-blue-600" : ""}
-            />
+            /> */}
             <span className="text-gray-500">{likes}</span>
-            <span className="text-gray-300">|</span>
-            <img
+            {/* <span className="text-gray-300">|</span> */}
+          </div>
+          <div
+            className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
+            onClick={handleUnLike}
+          >
+            {unLiked ? (
+              <ThumbUpIcon
+                className="cursor-pointer rotate-180"
+                fontSize="small"
+                sx={{ color: blue[500] }}
+              />
+            ) : (
+              <ThumbUpOutlinedIcon
+                className="cursor-pointer rotate-180"
+                fontSize="small"
+                sx={{ color: blue[500] }}
+              />
+            )}
+            {/* <img
               src="/like.png"
               alt="Dislike"
               width={16}
               height={16}
               className="cursor-pointer rotate-180"
-            />
+            /> */}
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl"
@@ -284,8 +346,8 @@ const Post = ({ item }) => {
             <span className="text-gray-500 cursor-pointer">200</span>
           </div>
         </div>
-        <div>
-          <div className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl">
+        <div className="flex gap-4">
+          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
             <img
               src="/share.png"
               alt="Share"
@@ -295,34 +357,73 @@ const Post = ({ item }) => {
             />
             <span className="text-gray-400">share</span>
           </div>
+          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+            <div
+              className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl cursor-pointer"
+              onClick={handleSave}
+            >
+              {save ? (
+                <TurnedInRoundedIcon
+                  fontSize="small"
+                  sx={{ color: blue[500] }}
+                />
+              ) : (
+                <TurnedInNotRoundedIcon
+                  fontSize="small"
+                  sx={{ color: blue[500] }}
+                />
+              )}
+              {/* <img
+              src="/like.png"
+              alt="Dislike"
+              width={16}
+              height={16}
+              className="cursor-pointer rotate-180"
+            /> */}
+            </div>
+            {/* <img
+              src="/save.png"
+              alt="Share"
+              width={16}
+              height={16}
+              className="cursor-pointer"
+            /> */}
+          </div>
         </div>
       </div>
 
       {/* COMMENTS */}
-
-      {/* Write Comment */}
-      <div className="flex items-start gap-4">
-        <img
-          src={item?.user?.avatar || "/assets/avatars/def.jpeg"} 
-          alt="User Avatar"
-          width={32}
-          height={32}
-          className="w-8 h-8 rounded-full object-cover"
-        />
-        <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-xl px-4 py-2">
-          <input
-            type="text"
-            placeholder="Write a comment..."
-            className="bg-transparent outline-none w-full text-sm"
-          />
-          <SendRoundedIcon
-            sx={{ color: blue[500] }}
-            className="text-white group-hover:translate-x-1 transition-transform duration-200"
-            onClick={handleCreateComment}
-          />
-        </div>
-      </div>
-      {showComments && <Comments />}
+      {showComments && (
+        <>
+          <div className="flex items-start gap-4">
+            <img
+              src={item?.user?.avatar || "/assets/avatars/def.jpeg"}
+              alt="User Avatar"
+              width={32}
+              height={32}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+            <div className="flex-1 flex items-center justify-between bg-slate-100 rounded-xl px-4 py-2">
+              <input
+                type="text"
+                name="comment"
+                placeholder="Write a comment..."
+                className="bg-transparent outline-none w-full text-sm"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyPress={handleCommentKeyPress}
+              />
+              <button onClick={handleCreateComment}>
+                <SendRoundedIcon
+                  sx={{ color: blue[500] }}
+                  className="text-white group-hover:translate-x-1 transition-transform duration-200 cursor-pointer"
+                />
+              </button>
+            </div>
+          </div>
+          <Comments item={item} />
+        </>
+      )}
     </div>
   );
 };
