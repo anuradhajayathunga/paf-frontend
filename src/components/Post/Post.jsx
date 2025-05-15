@@ -224,7 +224,7 @@ const Post = ({ item }) => {
   };
 
   const keywordColors = [
-    { text: "text-green-600", bg: "bg-blue-100" },
+    { text: "text-green-600", bg: "bg-green-100" },
     { text: "text-blue-600", bg: "bg-blue-100" },
     { text: "text-purple-600", bg: "bg-purple-100" },
     { text: "text-pink-600", bg: "bg-pink-100" },
@@ -270,7 +270,7 @@ const Post = ({ item }) => {
                 })}
 
               {/* Optional static tags */}
-              <span className="text-xs text-teal-500 bg-gray-100 px-2 py-1 rounded-full">
+              <span className="text-xs text-teal-500 bg-teal-100 px-2 py-1 rounded-full">
                 #photography
               </span>
             </div>

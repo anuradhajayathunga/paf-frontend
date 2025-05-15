@@ -2,6 +2,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import ProfileModal from "./ProfileModal";
+import moment from "moment/moment";
 
 const UserinfoCard = () => {
   const { auth } = useSelector((store) => store);
@@ -45,7 +46,7 @@ const UserinfoCard = () => {
           <div className="flex items-center gap-2">
             <img src="/map.png" alt="Location" width={18} height={18} />
             <span>
-              Lives in <span className="font-medium">{user?.city}</span>
+              Lives in <span className="font-bold capitalize">{user?.city || "Kandy"}</span>
             </span>
           </div>
           {/* <div className="flex items-center gap-2">
@@ -57,7 +58,7 @@ const UserinfoCard = () => {
           <div className="flex items-center gap-2">
             <img src="/work.png" alt="Workplace" width={18} height={18} />
             <span>
-              Works at <span className="font-medium">{user?.work}</span>
+              Works at <span className="font-bold capitalize">{user?.work || "Colombo"}</span>
             </span>
           </div>
         </div>
@@ -78,7 +79,7 @@ const UserinfoCard = () => {
           <div className="flex items-center gap-2">
             <img src="/date.png" alt="Joined Date" width={16} height={16} />
             <span>
-              Joined <span className="font-medium">December 2016</span>
+              Joined <span className="font-medium"> {moment(user?.createdAt).format("MMMM YYYY")}</span>
             </span>
           </div>
         </div>
