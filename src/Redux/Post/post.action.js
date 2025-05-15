@@ -143,24 +143,6 @@ export const deletePostAction = (postId) => async (dispatch) => {
   }
 };
 
-// export const savePostAction = (postId) => async (dispatch) => {
-//   dispatch({ type: SAVE_POST_REQUEST });
-//   try {
-//     const { data } = await api.put(`/post/save/${postId}`);
-//     dispatch({ type: SAVE_POST_SUCCESS, payload: data });
-//     console.log("Save post -->", data);
-//   } catch (error) {
-//     dispatch({
-//       type: SAVE_POST_FAILURE,
-//       payload:
-//         error.response?.data?.message ||
-//         error.message ||
-//         "Something went wrong",
-//     });
-//     console.error("Error saving post -->", error);
-//   }
-// };
-
 // ✅ Save a post for the authenticated user
 export const savePostAction = (postId) => async (dispatch) => {
   dispatch({ type: SAVE_POST_REQUEST });
@@ -241,7 +223,6 @@ export const searchPostAction = (query) => async (dispatch) => {
     });
   }
 };
-
 
 // COMMETNTS
 export const createCommetAction = (reqData) => async (dispatch) => {

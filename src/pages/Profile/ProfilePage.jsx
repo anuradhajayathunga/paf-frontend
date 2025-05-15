@@ -1,10 +1,11 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CreateRoundedIcon from "@mui/icons-material/CreateRounded";
 import ProfileFeed from "../../components/ProfileFeed";
 // import LeftMenu from "../../components/LeftMenu/LeftMenu";
 import RightMenu from "../../components/RightMenu/RightMenu";
 import UpdateImageModal from "./UpdateImageModal";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getUserPostAction } from "../../Redux/Post/post.action";
 
 const ProfilePage = () => {
   const { auth } = useSelector((store) => store);
@@ -14,15 +15,20 @@ const ProfilePage = () => {
     avatar: auth.user?.avatar,
     cover: auth.user?.cover,
   });
+  // Fetch posts from Redux state
+  const { userPosts, loading, error } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
 
   const handleImageUpdate = (data) => {
     setProfileImages({
       avatar: data.avatar || profileImages.avatar,
       cover: data.cover || profileImages.cover,
     });
-
-    // TODO: Dispatch action to update in DB (optional)
   };
+  // Fetch user posts on mount or userId change
+  useEffect(() => {
+    dispatch(getUserPostAction(user?.id));
+  }, [dispatch]);
   return (
     <div className="flex flex-col lg:flex-row gap-4 pt-4 px-4  mx-auto">
       {/* Left Sidebar */}
@@ -71,11 +77,11 @@ const ProfilePage = () => {
               </button>
             </div>
             <h1 className="mt-4 text-xl md:text-2xl font-semibold text-gray-900 capitalize">
-              {auth.user?.fname} {auth.user?.lname} 
+              {auth.user?.fname} {auth.user?.lname}
             </h1>
             <div className="flex gap-12 mt-4 text-center">
               <div>
-                <p className="text-lg font-semibold text-gray-900">50</p>
+                <p className="text-lg font-semibold text-gray-900">{userPosts?.length || 0}</p>
                 <p className="text-sm text-gray-500">Posts</p>
               </div>
               <div>
