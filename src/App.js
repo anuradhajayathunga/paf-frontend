@@ -11,6 +11,7 @@ import { getProfileAction } from "./Redux/Auth/auth.action";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAllPostAction } from "./Redux/Post/post.action";
+import PostDetails from "./components/Post/PostDetails";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,12 +34,12 @@ function App() {
 
       <div className="bg-slate-100 px-1 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
         <Routes>
-          {/* <Route
+          <Route
             path="/"
             element={
               auth.user ? <Navigate to="/home" /> : <Navigate to="/login" />
             }
-          /> */}
+          />
           <Route
             path="/home"
             element={auth.user ? <HomePage /> : <Navigate to="/login" />}
@@ -47,6 +48,9 @@ function App() {
             path="/profile/:id"
             element={auth.user ? <ProfilePage /> : <Navigate to="/login" />}
           />
+          {/* Post details route - accessible to all */}
+          <Route path="/post/:id" element={<PostDetails />} />
+
           <Route
             path="/message"
             element={auth.user ? <Message /> : <Navigate to="/login" />}

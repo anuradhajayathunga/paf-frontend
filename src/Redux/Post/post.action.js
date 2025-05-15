@@ -30,6 +30,9 @@ import {
   REMOVE_SAVED_POST_REQUEST,
   REMOVE_SAVED_POST_SUCCESS,
   REMOVE_SAVED_POST_FAILURE,
+  SEARCH_POST_REQUEST,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILURE,
 } from "./post.actionType";
 
 export const createPostAction = (postData) => async (dispatch) => {
@@ -140,24 +143,6 @@ export const deletePostAction = (postId) => async (dispatch) => {
   }
 };
 
-// export const savePostAction = (postId) => async (dispatch) => {
-//   dispatch({ type: SAVE_POST_REQUEST });
-//   try {
-//     const { data } = await api.put(`/post/save/${postId}`);
-//     dispatch({ type: SAVE_POST_SUCCESS, payload: data });
-//     console.log("Save post -->", data);
-//   } catch (error) {
-//     dispatch({
-//       type: SAVE_POST_FAILURE,
-//       payload:
-//         error.response?.data?.message ||
-//         error.message ||
-//         "Something went wrong",
-//     });
-//     console.error("Error saving post -->", error);
-//   }
-// };
-
 // ✅ Save a post for the authenticated user
 export const savePostAction = (postId) => async (dispatch) => {
   dispatch({ type: SAVE_POST_REQUEST });
@@ -210,6 +195,27 @@ export const getSavedPostsAction = () => async (dispatch) => {
     console.error("Error fetching saved posts -->", error);
     dispatch({
       type: GET_SAVED_POSTS_FAILURE,
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
+  }
+};
+
+//Search post
+export const searchPostAction = (query) => async (dispatch) => {
+  dispatch({ type: SEARCH_POST_REQUEST }); // or create new SEARCH_POST_REQUEST
+  try {
+    const { data } = await api.get(
+      `/search/post?query=${encodeURIComponent(query)}`
+    );
+    dispatch({ type: SEARCH_POST_SUCCESS, payload: data }); // or SEARCH_POST_SUCCESS
+    console.log("Search results -->", data);
+  } catch (error) {
+    console.error("Error searching posts -->", error);
+    dispatch({
+      type: SEARCH_POST_FAILURE, // or SEARCH_POST_FAILURE
       payload:
         error.response?.data?.message ||
         error.message ||

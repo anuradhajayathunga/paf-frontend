@@ -1,17 +1,35 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import MobileMenu from "../MobileMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUserAction } from "../../Redux/Auth/auth.action";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+import { searchPostAction } from "../../Redux/Post/post.action";
+import SearchResults from "./SearchResults"; // Import the new component
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const menuRef = useRef();
+  const searchRef = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [isFocused, setIsFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Get auth state from Redux
-  const { loading, error, jwt, user } = useSelector((state) => state.auth);
+  const {
+    // loading: authLoading,
+    // error: authError,
+    jwt,
+    user,
+  } = useSelector((state) => state.auth);
+
+  // Get search results from Redux
+  const {
+    loading: searchLoading,
+    error: searchError,
+    searchResults,
+  } = useSelector((state) => state.post || {});
 
   // Check authentication status properly
   const isAuthenticated = Boolean(jwt || localStorage.getItem("jwt"));
@@ -22,10 +40,20 @@ const Navbar = () => {
       if (menuRef.current && !menuRef.current.contains(e.target)) {
         setShowMenu(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSearchResults(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Show search results when search results arrive
+  useEffect(() => {
+    if (searchResults && searchResults.length > 0) {
+      setShowSearchResults(true);
+    }
+  }, [searchResults]);
 
   // Handle logout process
   const handleLogout = async () => {
@@ -41,6 +69,24 @@ const Navbar = () => {
       // navigate("/login");
     }
   };
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      dispatch(searchPostAction(searchQuery));
+      setShowSearchResults(true);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const closeSearchResults = () => {
+    setShowSearchResults(false);
+  };
+
   return (
     <header className="h-20 flex items-center justify-between px-4 md:px-8 bg-white border-b shadow-sm">
       {/* LEFT - LOGO */}
@@ -79,13 +125,66 @@ const Navbar = () => {
       </nav>
 
       {/* SEARCH - ONLY ON XL */}
-      <div className="hidden xl:flex items-center bg-gray-100 px-3 py-2 rounded-sm w-80">
+      <div
+        ref={searchRef}
+        className={`hidden xl:flex relative items-center bg-white border rounded-sm px-3 py-1 w-80 transition-all duration-200 ${
+          isFocused
+            ? "border-blue-500 shadow-md"
+            : "border-gray-200 hover:border-gray-300"
+        }`}
+      >
         <input
           type="text"
           placeholder="Search..."
-          className="bg-transparent w-full outline-none text-sm placeholder-gray-500"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className="bg-transparent w-full outline-none text-sm text-gray-800 placeholder-gray-400"
         />
-        <img src="/search.png" alt="Search" width={16} height={16} />
+        <div className="flex items-center">
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="mr-2 text-gray-400 hover:text-gray-600"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+          )}
+          <button
+            onClick={handleSearch}
+            className={`p-1 rounded-md transition-colors ${
+              isFocused
+                ? "text-blue-500 hover:bg-blue-50"
+                : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            <SearchRoundedIcon size={18} />
+          </button>
+        </div>
+
+        {/* SEARCH RESULTS DROPDOWN */}
+        {showSearchResults && (
+          <SearchResults
+            results={searchResults}
+            loading={searchLoading}
+            error={searchError}
+            onClose={closeSearchResults}
+          />
+        )}
       </div>
 
       {/* RIGHT - ICONS */}

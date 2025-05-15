@@ -20,6 +20,7 @@ import {
   updatePostAction,
   savePostAction,
   removeSavedPostAction,
+  likePostAction, // Import the likePostAction
 } from "../../Redux/Post/post.action";
 import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
@@ -38,7 +39,6 @@ const Post = ({ item }) => {
   const isOwner = user?.id === item?.user?.id;
 
   // Fix: Check if post is saved by current user using the correct property
-  // Also ensure we're checking for the correct ID type (_id vs id)
   const [isSaved, setIsSaved] = useState(
     item?.savedByUsers?.includes(user?._id)
   );
@@ -46,13 +46,37 @@ const Post = ({ item }) => {
 
   const handlwShowComments = () => setShowComments(!showComments);
 
-  // Like
-  const [likes, setLikes] = useState(1000); // Assuming 1K likes initially
-  const [liked, setLiked] = useState(false);
+  // Updated Like Implementation
+  const [liking, setLiking] = useState(false);
+  const [liked, setLiked] = useState(
+    // Check if the current user has liked this post
+    item?.likes?.includes(user?._id)
+  );
 
-  const handleLike = () => {
-    setLikes(likes + (liked ? -1 : 1));
-    setLiked(!liked);
+  // Proper like handler that connects to the API
+  const handleLike = async () => {
+    if (!user || liking) return;
+
+    setLiking(true);
+    try {
+      // Dispatch the like action
+      await dispatch(likePostAction(item.id || item._id));
+      
+      // Toggle the liked state for immediate UI feedback
+      setLiked(!liked);
+      
+      // Refresh the posts to update the UI with the latest data
+      await dispatch(getAllPostAction());
+      
+      if (!liked) {
+        toast.success("Post liked successfully!");
+      }
+    } catch (error) {
+      toast.error("Failed to like post.");
+      console.error("Like error:", error);
+    } finally {
+      setLiking(false);
+    }
   };
 
   // UnLike
@@ -113,8 +137,12 @@ const Post = ({ item }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fix: Update the isSaved state whenever item changes
+  // Update the liked and saved states whenever the item or user changes
   useEffect(() => {
+    if (item?.likes && user?._id) {
+      setLiked(item.likes.includes(user._id));
+    }
+    
     if (item?.savedByUsers && user?._id) {
       setIsSaved(item.savedByUsers.includes(user._id));
     }
@@ -195,6 +223,14 @@ const Post = ({ item }) => {
     }
   };
 
+  const keywordColors = [
+    { text: "text-green-600", bg: "bg-green-100" },
+    { text: "text-blue-600", bg: "bg-blue-100" },
+    { text: "text-purple-600", bg: "bg-purple-100" },
+    { text: "text-pink-600", bg: "bg-pink-100" },
+    { text: "text-yellow-600", bg: "bg-yellow-100" },
+  ];
+
   return (
     <div className="flex flex-col gap-4 ">
       {/* USER */}
@@ -216,13 +252,25 @@ const Post = ({ item }) => {
             <p className="text-sm text-gray-500">{item?.caption}</p>
             {/* Keywords */}
             <div className="flex flex-wrap gap-2 mt-1">
-              <span className="text-xs text-green-600 bg-blue-100 px-2 py-1 rounded-full">
-                #{item?.keywords}
-              </span>
-              <span className="text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                #foodie
-              </span>
-              <span className="text-xs text-purple-600 bg-purple-100 px-2 py-1 rounded-full">
+              {(Array.isArray(item.keywords)
+                ? item.keywords
+                : item.keywords?.split(",").map((k) => k.trim())
+              )
+                ?.slice(0, 5)
+                .map((keyword, idx) => {
+                  const color = keywordColors[idx % keywordColors.length]; // Rotate colors
+                  return (
+                    <span
+                      key={idx}
+                      className={`text-xs px-2 py-1 rounded-full ${color.text} ${color.bg}`}
+                    >
+                      #{keyword}
+                    </span>
+                  );
+                })}
+
+              {/* Optional static tags */}
+              <span className="text-xs text-teal-500 bg-teal-100 px-2 py-1 rounded-full">
                 #photography
               </span>
             </div>
@@ -319,17 +367,18 @@ const Post = ({ item }) => {
                 swiper.navigation.update();
               }}
             >
-              {item?.img && (
-                <SwiperSlide>
-                  <div className="w-full h-[600px] flex items-center justify-center bg-white">
-                    <img
-                      src={item.img}
-                      alt="Post Image"
-                      className="object-contain max-h-full max-w-full"
-                    />
-                  </div>
-                </SwiperSlide>
-              )}
+              {Array.isArray(item?.images) &&
+                item.images.map((imgUrl, idx) => (
+                  <SwiperSlide key={idx}>
+                    <div className="w-full h-[600px] flex items-center justify-center bg-white">
+                      <img
+                        src={imgUrl}
+                        alt={`Post Image ${idx + 1}`}
+                        className="object-contain max-h-full max-w-full"
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
               {item?.video && (
                 <SwiperSlide>
                   <video
@@ -350,7 +399,9 @@ const Post = ({ item }) => {
       <div className="flex items-center justify-between text-sm my-2">
         <div className="flex gap-2">
           <div
-            className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
+            className={`flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer ${
+              liking ? "opacity-50 pointer-events-none" : ""
+            }`}
             onClick={handleLike}
           >
             {liked ? (
@@ -358,7 +409,9 @@ const Post = ({ item }) => {
             ) : (
               <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
             )}
-            <span className="text-gray-500">{likes}</span>
+            <span className="text-gray-500">
+              {liking ? "..." : item?.likes?.length || 0}
+            </span>
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
@@ -389,7 +442,10 @@ const Post = ({ item }) => {
               height={16}
               className="cursor-pointer"
             />
-            <span className="text-gray-500 cursor-pointer"> {item.comments.length}</span>
+            <span className="text-gray-500 cursor-pointer">
+              {" "}
+              {item?.comments?.length || 0}
+            </span>
           </div>
         </div>
         <div className="flex gap-4">

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getSavedPostsAction } from "../Redux/Post/post.action";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 
 const SavedPostsSection = () => {
   const dispatch = useDispatch();
@@ -76,9 +77,9 @@ const SavedPostsSection = () => {
               key={post.id || index}
               className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer"
             >
-              <Link to={`/posts/${post.id}`}>
+              <Link to={`/post/${post.id}`}>
                 <img
-                  src={post.mediaUrl || post.img || "/placeholder-image.jpg"}
+                  src={post.mediaUrl || post.images || "/placeholder-image.jpg"}
                   alt={post.caption || `saved-post-${index}`}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                 />
@@ -86,7 +87,7 @@ const SavedPostsSection = () => {
                 {/* Optional overlay for caption or like count */}
                 <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity flex items-center justify-center opacity-0 hover:opacity-100">
                   <div className="text-white text-xs flex items-center gap-1">
-                    <span>👍 {post.likes?.length || 0}</span>
+                    <span><ThumbUpIcon fontSize="small"/> {post.likes?.length || 0}</span>
                   </div>
                 </div>
               </Link>
