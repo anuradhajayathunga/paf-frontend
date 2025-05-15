@@ -78,7 +78,7 @@ const SavedPostsSection = () => {
             >
               <Link to={`/posts/${post.id}`}>
                 <img
-                  src={post.mediaUrl || post.img || "/placeholder-image.jpg"}
+                  src={post.mediaUrl || post.images || "/placeholder-image.jpg"}
                   alt={post.caption || `saved-post-${index}`}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                 />

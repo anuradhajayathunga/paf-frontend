@@ -146,10 +146,10 @@ const PostDetails = () => {
               )}
 
               {/* Post Image */}
-              {post.img && (
+              {post.images && (
                 <div className="mb-4">
                   <img
-                    src={post.img}
+                    src={post.images}
                     alt="Post content"
                     className="w-full h-auto rounded-md object-cover max-h-[600px]"
                   />

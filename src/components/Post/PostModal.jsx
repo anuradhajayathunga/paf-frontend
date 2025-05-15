@@ -14,6 +14,7 @@ import {
   LinearProgress,
   Backdrop,
   CircularProgress,
+  Chip,
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -21,9 +22,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
 import { useDispatch } from "react-redux";
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { ArrowBackIos, ArrowForwardIos, Category } from "@mui/icons-material";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 import { createPostAction } from "../../Redux/Post/post.action";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -40,39 +42,60 @@ const style = {
 
 const PostModal = ({ open, handleClose }) => {
   const dispatch = useDispatch();
-  const [photoPreview, setPhotoPreview] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState([]);
   const [videoPreview, setVideoPreview] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [keywordInput, setKeywordInput] = useState("");
 
   const validationSchema = yup.object({
-    // caption: yup.string().required("Caption is required"),
-    img: yup.string().required("Photo is required"),
-    video: yup.string().required("Video is required"),
-    // category: yup.string().required("Category is required"),
+    images: yup.array().min(1, "At least one photo is required"),
+    video: yup.string(),
+    keywords: yup.array().max(5, "Maximum 5 keywords allowed"),
+    category: yup.string().required("Category is required"),
   });
 
-  const formik = useFormik({
-    initialValues: {
-      caption: "",
-      keywords: "",
-      img: "",
-      video: "",
-    },
-    enableReinitialize: true,
-    onSubmit: (values) => {
-      console.log("Form values:", values);
-      dispatch(createPostAction(values));
-      handleClose();
-    },
-  });
+ const formik = useFormik({
+  initialValues: {
+    caption: "",
+    keywords: [],
+    category: "",
+    images: [],
+    video: "",
+  },
+  validationSchema,
+  enableReinitialize: true,
+  onSubmit: (values, { resetForm }) => {
+    dispatch(createPostAction(values));
+    toast.success("Post created successfully.");
+    resetForm(); // ✅ Works now
+    setPhotoPreview([]);
+    setVideoPreview(null);
+    setKeywordInput("");
+    handleClose();
+  },
+});
+
 
   const handlePhotoChange = async (event) => {
+    const files = Array.from(event.target.files);
+    if (photoPreview.length + files.length > 3) {
+      alert("You can only upload up to 3 images.");
+      return;
+    }
+
     setIsLoading(true);
-    const imageUrl = await uploadToCloudinary(event.target.files[0], "image");
-    setPhotoPreview(imageUrl);
-    formik.setFieldTouched("img", true); // Set touched
-    formik.setFieldValue("img", imageUrl);
+    const uploadedUrls = [];
+
+    for (let file of files) {
+      const imageUrl = await uploadToCloudinary(file, "image");
+      if (imageUrl) uploadedUrls.push(imageUrl);
+    }
+
+    const newPhotos = [...photoPreview, ...uploadedUrls];
+    setPhotoPreview(newPhotos);
+    formik.setFieldTouched("images", true);
+    formik.setFieldValue("images", newPhotos);
     setIsLoading(false);
   };
 
@@ -83,10 +106,32 @@ const PostModal = ({ open, handleClose }) => {
     const fileType = file.type.startsWith("video") ? "video" : "image";
     const videoUrl = await uploadToCloudinary(file, fileType);
     setVideoPreview(videoUrl);
-    formik.setFieldTouched("video", true); // Set touched
+    formik.setFieldTouched("video", true);
     formik.setFieldValue("video", videoUrl);
 
     setIsLoading(false);
+  };
+
+  const handleAddKeyword = () => {
+    if (keywordInput.trim() && formik.values.keywords.length < 5) {
+      const newKeywords = [...formik.values.keywords, keywordInput.trim()];
+      formik.setFieldValue("keywords", newKeywords);
+      setKeywordInput("");
+    }
+  };
+
+  const handleRemoveKeyword = (keywordToRemove) => {
+    const newKeywords = formik.values.keywords.filter(
+      (keyword) => keyword !== keywordToRemove
+    );
+    formik.setFieldValue("keywords", newKeywords);
+  };
+
+  const handleKeywordKeyPress = (e) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      handleAddKeyword();
+    }
   };
 
   const scrollRef = useRef(null);
@@ -102,7 +147,7 @@ const PostModal = ({ open, handleClose }) => {
   };
 
   const previews = [
-    ...(photoPreview ? [{ type: "image", src: photoPreview }] : []),
+    ...photoPreview.map((src) => ({ type: "image", src })),
     ...(videoPreview ? [{ type: "video", src: videoPreview }] : []),
   ];
 
@@ -126,9 +171,9 @@ const PostModal = ({ open, handleClose }) => {
           <Stack spacing={3}>
             {/* Media Upload Section */}
             <Box>
-              <InputLabel sx={{ mb: 1, fontWeight: 300, color: "#2563eb" }}>
+              {/* <InputLabel sx={{ mb: 1, fontWeight: 300, color: "#2563eb" }}>
                 Media
-              </InputLabel>
+              </InputLabel> */}
 
               <Stack direction="row" spacing={2}>
                 {/* Photo Upload */}
@@ -138,6 +183,7 @@ const PostModal = ({ open, handleClose }) => {
                     id="photo-upload"
                     type="file"
                     hidden
+                    multiple
                     onChange={handlePhotoChange}
                   />
                   <Box
@@ -199,9 +245,9 @@ const PostModal = ({ open, handleClose }) => {
               </Stack>
 
               {/* Error Messages */}
-              {formik.touched.img && formik.errors.img && (
+              {formik.touched.images && formik.errors.images && (
                 <Typography sx={{ color: "#ef4444", fontSize: 12, mt: 0.5 }}>
-                  {formik.errors.img}
+                  {formik.errors.images}
                 </Typography>
               )}
               {formik.touched.video && formik.errors.video && (
@@ -297,7 +343,7 @@ const PostModal = ({ open, handleClose }) => {
               label="Caption"
               name="caption"
               multiline
-              rows={3}
+              rows={2}
               value={formik.values.caption}
               onChange={formik.handleChange}
               error={formik.touched.caption && Boolean(formik.errors.caption)}
@@ -305,19 +351,56 @@ const PostModal = ({ open, handleClose }) => {
               InputProps={{ style: { borderRadius: "10px" } }}
             />
 
-            {/* Keywords */}
-            <TextField
-              label="Keywords (comma separated)"
-              name="keywords"
-              placeholder="e.g. landscape, portrait, long-exposure"
-              value={formik.values.keywords}
-              onChange={formik.handleChange}
-              InputProps={{ style: { borderRadius: "10px" } }}
-            />
+            {/* Keywords - Improved with Chips */}
+            <Box>
+              <InputLabel sx={{ mb: 1, fontWeight: 300, color: "#2563eb" }}>
+                Keywords (Max 5)
+              </InputLabel>
+              <Box display="flex" alignItems="center" mb={1}>
+                <TextField
+                  placeholder="Add keyword and press Enter"
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onKeyPress={handleKeywordKeyPress}
+                  disabled={formik.values.keywords.length >= 5}
+                  fullWidth
+                  InputProps={{ style: { borderRadius: "10px" } }}
+                />
+                <Button
+                  onClick={handleAddKeyword}
+                  variant="outlined"
+                  sx={{ ml: 1, borderRadius: "10px" }}
+                  disabled={
+                    !keywordInput.trim() || formik.values.keywords.length >= 5
+                  }
+                >
+                  Add
+                </Button>
+              </Box>
+
+              {/* Keywords Display */}
+              <Box display="flex" flexWrap="wrap" gap={1} my={1}>
+                {formik.values.keywords.map((keyword, index) => (
+                  <Chip
+                    key={index}
+                    label={keyword}
+                    onDelete={() => handleRemoveKeyword(keyword)}
+                    color="primary"
+                    variant="outlined"
+                  />
+                ))}
+              </Box>
+
+              {formik.touched.keywords && formik.errors.keywords && (
+                <Typography sx={{ color: "#ef4444", fontSize: 12, mt: 0.5 }}>
+                  {formik.errors.keywords}
+                </Typography>
+              )}
+            </Box>
 
             {/* Category */}
-            {/* <FormControl fullWidth>
-              <InputLabel>Category</InputLabel>
+            <FormControl fullWidth>
+              {/* <InputLabel>Category</InputLabel> */}
               <Select
                 name="category"
                 value={formik.values.category}
@@ -352,7 +435,7 @@ const PostModal = ({ open, handleClose }) => {
                   {formik.errors.category}
                 </Typography>
               )}
-            </FormControl> */}
+            </FormControl>
 
             {/* Submit Button */}
             <Stack direction="row" justifyContent="flex-end">
@@ -362,8 +445,8 @@ const PostModal = ({ open, handleClose }) => {
                 disabled={
                   isLoading ||
                   uploadProgress > 0 ||
-                  !formik.values.img ||
-                  !formik.values.video
+                  formik.values.images.length === 0 ||
+                  formik.values.category === ""
                 }
                 sx={{ borderRadius: "20px" }}
               >

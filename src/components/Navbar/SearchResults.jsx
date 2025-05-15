@@ -64,9 +64,9 @@ const SearchResults = ({ results, loading, error, onClose }) => {
               onClick={onClose}
             >
               <div className="flex items-start">
-                {post.img && (
+                {post.images && (
                   <img 
-                    src={post.img} 
+                    src={post.images} 
                     alt={post.caption || "Post"} 
                     className="w-12 h-12 object-cover rounded mr-3"
                   />
