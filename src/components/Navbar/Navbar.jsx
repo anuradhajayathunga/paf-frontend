@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import MobileMenu from "../MobileMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUserAction } from "../../Redux/Auth/auth.action";
@@ -13,14 +13,13 @@ const Navbar = () => {
   const menuRef = useRef();
   const searchRef = useRef();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Get auth state from Redux
   const {
-    loading: authLoading,
-    error: authError,
+    // loading: authLoading,
+    // error: authError,
     jwt,
     user,
   } = useSelector((state) => state.auth);
