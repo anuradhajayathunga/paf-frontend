@@ -143,6 +143,7 @@ export const deletePostAction = (postId) => async (dispatch) => {
   }
 };
 
+
 // ✅ Save a post for the authenticated user
 export const savePostAction = (postId) => async (dispatch) => {
   dispatch({ type: SAVE_POST_REQUEST });
@@ -223,6 +224,7 @@ export const searchPostAction = (query) => async (dispatch) => {
     });
   }
 };
+
 
 // COMMETNTS
 export const createCommetAction = (reqData) => async (dispatch) => {

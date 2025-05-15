@@ -15,9 +15,9 @@ export const LeftMenuNavigation = [
     //   path: "/marketplace",
     // },
     {
-      title: "Events",
+      title: "Learning Plan",
       icon: "/events.png",
-      path: "/events",
+      path: "/learning-plan",
     },
     {
       title: "Albums",

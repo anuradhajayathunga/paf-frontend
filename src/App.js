@@ -12,6 +12,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAllPostAction } from "./Redux/Post/post.action";
 import PostDetails from "./components/Post/PostDetails";
+import CoursePage from "./pages/Course/CoursePage";
+import LearningPlanDashboard from "./pages/Learning-Plans/LearningPlanPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -55,6 +57,15 @@ function App() {
             path="/message"
             element={auth.user ? <Message /> : <Navigate to="/login" />}
           />
+          <Route
+            path="/courses"
+            element={auth.user ? <CoursePage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/learning-plan"
+            element={auth.user ? <LearningPlanDashboard /> : <Navigate to="/login" />}
+          />
+
           <Route
             path="/login"
             element={
