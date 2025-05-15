@@ -81,7 +81,7 @@ const SearchResults = ({ results, loading, error, onClose }) => {
                         className="w-5 h-5 rounded-full mr-1.5"
                       />
                     )}
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-gray-500 capitalize">
                       {post.user?.fname ? `${post.user.fname} ${post.user.lname || ""}` : "Unknown user"}
                     </span>
                   </div>
