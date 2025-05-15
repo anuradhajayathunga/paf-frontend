@@ -25,7 +25,8 @@ const Comments = ({ item }) => {
       {/* Comment count and sorting options */}
       <div className="flex items-center justify-between px-2">
         <h3 className="text-gray-700 font-medium">
-          {item.comments.length} {item.comments.length === 1 ? "Comment" : "Comments"}
+          {item.comments.length}{" "}
+          {item.comments.length === 1 ? "Comment" : "Comments"}
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">Sort by:</span>
@@ -47,17 +48,20 @@ const Comments = ({ item }) => {
 // Simple function to format time (without date-fns)
 const formatTimeAgo = (dateString) => {
   if (!dateString) return "just now";
-  
+
   try {
     const commentDate = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now - commentDate) / 1000);
-    
+
     if (diffInSeconds < 60) return "just now";
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
-    
+    if (diffInSeconds < 3600)
+      return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+    if (diffInSeconds < 86400)
+      return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+    if (diffInSeconds < 604800)
+      return `${Math.floor(diffInSeconds / 86400)} days ago`;
+
     // Simple date format for older comments
     return commentDate.toLocaleDateString();
   } catch (e) {
@@ -69,7 +73,9 @@ const formatTimeAgo = (dateString) => {
 // Separate component for each comment
 const CommentItem = ({ comment }) => {
   const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(comment?.likes || Math.floor(Math.random() * 100)); // Random likes for demo
+  const [likeCount, setLikeCount] = useState(
+    comment?.likes || Math.floor(Math.random() * 100)
+  ); // Random likes for demo
   const [showMenu, setShowMenu] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -102,7 +108,7 @@ const CommentItem = ({ comment }) => {
       <div className="flex-shrink-0">
         <img
           src={comment?.user?.avatar || "/assets/avatars/def.jpeg"}
-          alt={`${comment?.user?.fname || 'User'}'s Avatar`}
+          alt={`${comment?.user?.fname || "User"}'s Avatar`}
           className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-sm"
         />
       </div>
@@ -115,20 +121,20 @@ const CommentItem = ({ comment }) => {
             {/* User info */}
             <div className="flex items-center gap-2 mb-1">
               <span className="font-semibold text-gray-900">
-                {comment?.user?.fname || 'User'} {comment?.user?.lname || ''}
+                {comment?.user?.fname || "User"} {comment?.user?.lname || ""}
               </span>
               <span className="text-xs text-gray-500">{timeAgo}</span>
             </div>
 
             {/* Comment text */}
             <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-              {comment?.comment || 'No comment text provided'}
+              {comment?.comment || "No comment text provided"}
             </p>
           </div>
 
           {/* More options button */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setShowMenu(!showMenu)}
               className="p-2 rounded-full hover:bg-gray-200 transition-colors"
             >
@@ -151,7 +157,7 @@ const CommentItem = ({ comment }) => {
 
         {/* Interactions */}
         <div className="flex items-center gap-4 mt-2 ml-2">
-          <button 
+          <button
             onClick={handleLike}
             className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-500 transition-colors"
           >
@@ -160,10 +166,10 @@ const CommentItem = ({ comment }) => {
             ) : (
               <ThumbUpOutlinedIcon fontSize="small" />
             )}
-            <span className={liked ? 'text-blue-500' : ''}>{likeCount}</span>
+            <span className={liked ? "text-blue-500" : ""}>{comment?.likes.length}</span>
           </button>
 
-          <button 
+          <button
             onClick={handleReply}
             className="flex items-center gap-1 text-sm text-gray-600 hover:text-blue-500 transition-colors"
           >
@@ -182,7 +188,7 @@ const CommentItem = ({ comment }) => {
               placeholder="Write a reply..."
               className="flex-1 p-2 bg-gray-100 rounded-full text-sm outline-none focus:ring-2 focus:ring-blue-300"
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && replyText.trim()) {
+                if (e.key === "Enter" && replyText.trim()) {
                   handleSubmitReply();
                 }
               }}
@@ -191,7 +197,9 @@ const CommentItem = ({ comment }) => {
               onClick={handleSubmitReply}
               disabled={!replyText.trim()}
               className={`px-3 py-1 rounded-full text-sm font-medium ${
-                replyText.trim() ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-500'
+                replyText.trim()
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-500"
               }`}
             >
               Reply
@@ -212,7 +220,7 @@ const CommentItem = ({ comment }) => {
                 <div className="flex-1 bg-gray-100 rounded-2xl px-3 py-2">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-sm text-gray-900">
-                      {reply?.user?.fname || 'User'} {reply?.user?.lname || ''}
+                      {reply?.user?.fname || "User"} {reply?.user?.lname || ""}
                     </span>
                     <span className="text-xs text-gray-500">
                       {formatTimeAgo(reply?.createdAt)}

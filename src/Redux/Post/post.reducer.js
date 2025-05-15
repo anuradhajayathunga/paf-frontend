@@ -31,6 +31,10 @@ import {
   REMOVE_SAVED_POST_REQUEST,
   REMOVE_SAVED_POST_SUCCESS,
   REMOVE_SAVED_POST_FAILURE,
+  SEARCH_POST_REQUEST,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILURE,
+  CLEAR_SEARCH_RESULTS,
 } from "./post.actionType";
 
 const initialState = {
@@ -42,7 +46,7 @@ const initialState = {
   like: null,
   comment: null,
   comments: [],
-  savedPosts: [], 
+  savedPosts: [],
 };
 
 export const postReducer = (state = initialState, action) => {
@@ -57,6 +61,7 @@ export const postReducer = (state = initialState, action) => {
     case SAVE_POST_REQUEST:
     case REMOVE_SAVED_POST_REQUEST:
     case GET_SAVED_POSTS_REQUEST:
+    case SEARCH_POST_REQUEST:
       return {
         ...state,
         loading: true,
@@ -189,6 +194,14 @@ export const postReducer = (state = initialState, action) => {
         error: null,
       };
 
+    case SEARCH_POST_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        searchResults: action.payload,
+        error: null,
+      };
+
     case ADD_POST_FAILURE:
     case GET_ALL_POST_FAILURE:
     case GET_POST_BY_USERID_FAILURE:
@@ -203,6 +216,20 @@ export const postReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.payload,
+      };
+
+    case SEARCH_POST_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+
+    case CLEAR_SEARCH_RESULTS:
+      return {
+        ...state,
+        searchResults: [],
+        error: null,
       };
 
     default:

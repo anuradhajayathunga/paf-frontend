@@ -358,7 +358,7 @@ const Post = ({ item }) => {
             ) : (
               <ThumbUpOutlinedIcon fontSize="small" sx={{ color: blue[500] }} />
             )}
-            <span className="text-gray-500">{likes}</span>
+            <span className="text-gray-500">{item?.likes.length}</span>
           </div>
           <div
             className="flex items-center gap-1 bg-slate-50 p-2 rounded-xl cursor-pointer"
