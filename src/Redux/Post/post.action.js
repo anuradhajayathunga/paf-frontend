@@ -30,6 +30,9 @@ import {
   REMOVE_SAVED_POST_REQUEST,
   REMOVE_SAVED_POST_SUCCESS,
   REMOVE_SAVED_POST_FAILURE,
+  SEARCH_POST_REQUEST,
+  SEARCH_POST_SUCCESS,
+  SEARCH_POST_FAILURE,
 } from "./post.actionType";
 
 export const createPostAction = (postData) => async (dispatch) => {
@@ -217,6 +220,28 @@ export const getSavedPostsAction = () => async (dispatch) => {
     });
   }
 };
+
+//Search post
+export const searchPostAction = (query) => async (dispatch) => {
+  dispatch({ type: SEARCH_POST_REQUEST }); // or create new SEARCH_POST_REQUEST
+  try {
+    const { data } = await api.get(
+      `/search/post?query=${encodeURIComponent(query)}`
+    );
+    dispatch({ type: SEARCH_POST_SUCCESS, payload: data }); // or SEARCH_POST_SUCCESS
+    console.log("Search results -->", data);
+  } catch (error) {
+    console.error("Error searching posts -->", error);
+    dispatch({
+      type: SEARCH_POST_FAILURE, // or SEARCH_POST_FAILURE
+      payload:
+        error.response?.data?.message ||
+        error.message ||
+        "Something went wrong",
+    });
+  }
+};
+
 
 // COMMETNTS
 export const createCommetAction = (reqData) => async (dispatch) => {
