@@ -4,10 +4,10 @@ import { authReducer } from "./Auth/auth.reducer";
 import { postReducer } from "./Post/post.reducer";
 import postDetailsReducer from "./Post/postDetailsReducer ";
 import learningPlanReducer from "./LearningPlan/learnplan.reducer";
+import progressReducer from "./LearningProgress/progress.reducer";
 
 const rootReducers = combineReducers({
   // Add your reducers here
-
   // Example: user: userReducer,
   auth: authReducer,
   // Example: posts: postsReducer,
@@ -16,6 +16,8 @@ const rootReducers = combineReducers({
   postDetails: postDetailsReducer,
 
   learningPlans: learningPlanReducer,
+
+   progress: progressReducer, // ✅ Register it here
 });
 
 export const store = legacy_createStore(rootReducers, applyMiddleware(thunk));

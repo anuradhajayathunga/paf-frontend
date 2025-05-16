@@ -10,24 +10,16 @@ import {
 import { 
   Button, 
   Card, 
-  CardContent, 
-  CardActions, 
+  CardContent,
   Container, 
   TextField, 
   Dialog, 
   DialogActions, 
   DialogContent, 
   DialogContentText, 
-  DialogTitle, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
-  TableRow, 
+  DialogTitle,
   Paper, 
   CircularProgress, 
-  Alert, 
   Typography, 
   Box, 
   FormControl, 
@@ -35,8 +27,28 @@ import {
   Select, 
   MenuItem, 
   Chip,
-  Link
+  Link,
+  Grid,
+  IconButton,
+  Avatar,
+  Tooltip,
+  Divider,
+  Stack
 } from '@mui/material';
+
+// Icons
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import LinkIcon from '@mui/icons-material/Link';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PauseCircleOutlineIcon from '@mui/icons-material/PauseCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LaptopIcon from '@mui/icons-material/Laptop';
 
 const LearningPlanDashboard = () => {
   const dispatch = useDispatch();
@@ -55,6 +67,9 @@ const LearningPlanDashboard = () => {
     topicsJson: '[]'
   });
   
+  // Fixed topics state to handle the JSON parsing issues
+  const [topicsInput, setTopicsInput] = useState('');
+  
   // Fetch user's learning plans on component mount
   useEffect(() => {
     dispatch(fetchUserPlans());
@@ -71,6 +86,7 @@ const LearningPlanDashboard = () => {
         status: 'Not Started',
         topicsJson: '[]'
       });
+      setTopicsInput('');
     }
   }, [showCreateModal, showEditModal]);
   
@@ -85,6 +101,15 @@ const LearningPlanDashboard = () => {
         status: currentPlan.status || 'Not Started',
         topicsJson: currentPlan.topicsJson || '[]'
       });
+      
+      // Set topics input for the form
+      try {
+        const topics = JSON.parse(currentPlan.topicsJson || '[]');
+        setTopicsInput(Array.isArray(topics) ? topics.join(', ') : '');
+      } catch (err) {
+        console.error('Error parsing topics:', err);
+        setTopicsInput('');
+      }
     }
   }, [showEditModal, currentPlan]);
   
@@ -97,9 +122,11 @@ const LearningPlanDashboard = () => {
     });
   };
 
-  // Handle topics input changes
+  // Handle topics input changes - Fixed to properly handle the JSON
   const handleTopicsChange = (e) => {
     const topicsString = e.target.value;
+    setTopicsInput(topicsString);
+    
     // Convert comma-separated string to JSON array
     try {
       const topicsArray = topicsString.split(',').map(topic => topic.trim()).filter(topic => topic);
@@ -109,17 +136,6 @@ const LearningPlanDashboard = () => {
       });
     } catch (err) {
       console.error('Error parsing topics:', err);
-    }
-  };
-  
-  // Get topics as a comma-separated string for display in form
-  const getTopicsString = () => {
-    try {
-      const topics = JSON.parse(formData.topicsJson || '[]');
-      return Array.isArray(topics) ? topics.join(', ') : '';
-    } catch (err) {
-      console.error('Error parsing topics JSON:', err);
-      return '';
     }
   };
   
@@ -185,128 +201,292 @@ const LearningPlanDashboard = () => {
       .catch(err => console.error('Error fetching plan details:', err));
   };
 
-  // Helper to render topics as chips
+  // Helper to render topics as chips - Fixed to properly handle JSON parsing
   const renderTopics = (topicsJson) => {
     try {
       const topics = JSON.parse(topicsJson || '[]');
       if (!Array.isArray(topics) || topics.length === 0) {
-        return <Typography variant="body2" color="text.secondary">No topics defined</Typography>;
+        return (
+          <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            No topics defined
+          </Typography>
+        );
       }
       
-      return topics.map((topic, index) => (
-        <Chip key={index} label={topic} color="info" size="small" sx={{ mr: 0.5, mb: 0.5 }} />
-      ));
+      return (
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+          {topics.map((topic, index) => (
+            <Chip 
+              key={index} 
+              label={topic} 
+              color="primary" 
+              size="small" 
+              variant="outlined"
+              sx={{ 
+                borderRadius: '16px',
+                fontWeight: 500,
+                '& .MuiChip-label': { px: 1.5 }
+              }} 
+            />
+          ))}
+        </Box>
+      );
     } catch (err) {
       console.error('Error parsing topics JSON:', err);
-      return <Typography variant="body2" color="text.secondary">Invalid topics format</Typography>;
+      return (
+        <Typography variant="body2" color="error">
+          Invalid topics format
+        </Typography>
+      );
     }
   };
 
-  // Status color mapping
-  const getStatusColor = (status) => {
+  // Status icon and color mapping
+  const getStatusInfo = (status) => {
     const statusLower = status?.toLowerCase() || '';
     
-    if (statusLower.includes('complete')) return 'success';
-    if (statusLower.includes('progress')) return 'primary';
-    if (statusLower.includes('overdue') || statusLower.includes('stuck')) return 'error';
-    if (statusLower.includes('paused')) return 'warning';
-    return 'default';
+    if (statusLower.includes('complete')) {
+      return { 
+        color: 'success',
+        icon: <CheckCircleIcon />,
+        bgColor: '#e6f7ea', // Light green background
+        textColor: '#2e7d32' // Success text color
+      };
+    }
+    if (statusLower.includes('progress')) {
+      return { 
+        color: 'primary',
+        icon: <LaptopIcon />,
+        bgColor: '#e3f2fd', // Light blue background
+        textColor: '#1976d2' // Primary text color
+      };
+    }
+    if (statusLower.includes('overdue') || statusLower.includes('stuck')) {
+      return { 
+        color: 'error',
+        icon: <ErrorOutlineIcon />,
+        bgColor: '#fdecea', // Light red background
+        textColor: '#d32f2f' // Error text color
+      };
+    }
+    if (statusLower.includes('paused')) {
+      return { 
+        color: 'warning',
+        icon: <PauseCircleOutlineIcon />,
+        bgColor: '#fff4e5', // Light orange background
+        textColor: '#ed6c02' // Warning text color
+      };
+    }
+    return { 
+      color: 'default',
+      icon: <HourglassEmptyIcon />,
+      bgColor: '#f5f5f5', // Light grey background
+      textColor: '#757575' // Grey text color
+    };
+  };
+
+  // Render a single learning plan card
+  const renderPlanCard = (plan) => {
+    const statusInfo = getStatusInfo(plan.status);
+    
+    return (
+      <Card 
+        elevation={2}
+        sx={{ 
+          height: '100%', 
+          display: 'flex', 
+          flexDirection: 'column',
+          transition: 'transform 0.2s, box-shadow 0.2s',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: 4
+          }
+        }}
+      >
+        <Box 
+          sx={{ 
+            p: 2, 
+            display: 'flex', 
+            justifyContent: 'space-between',
+            alignItems: 'flex-start'
+          }}
+        >
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Avatar 
+              sx={{ 
+                bgcolor: statusInfo.bgColor,
+                color: statusInfo.textColor,
+                mr: 1.5
+              }}
+            >
+              <BookmarkIcon />
+            </Avatar>
+            <Box>
+              <Typography variant="h6" component="h2" sx={{ lineHeight: 1.2, mb: 0.5 }}>
+                {plan.title}
+              </Typography>
+              <Chip 
+                icon={statusInfo.icon}
+                label={plan.status || 'Not Started'} 
+                color={statusInfo.color}
+                size="small"
+                sx={{ height: 24 }}
+              />
+            </Box>
+          </Box>
+          <Box>
+            <Tooltip title="Edit">
+              <IconButton size="small" onClick={() => openEditModal(plan)}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <IconButton size="small" onClick={() => openDeleteModal(plan)}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        </Box>
+        
+        <Divider />
+        
+        <CardContent sx={{ flexGrow: 1, py: 2 }}>
+          <Typography variant="body2" color="text.secondary" paragraph sx={{ mb: 2 }}>
+            {plan.description || 'No description provided.'}
+          </Typography>
+          
+          <Typography variant="subtitle2" gutterBottom sx={{ mt: 2, fontWeight: 600 }}>
+            Topics
+          </Typography>
+          {renderTopics(plan.topicsJson)}
+          
+          <Stack spacing={1.5} sx={{ mt: 2 }}>
+            {plan.resourceLink && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <LinkIcon fontSize="small" color="action" />
+                <Link 
+                  href={plan.resourceLink} 
+                  target="_blank" 
+                  rel="noopener"
+                  sx={{ 
+                    fontSize: '0.875rem',
+                    textDecoration: 'none',
+                    '&:hover': { textDecoration: 'underline' }
+                  }}
+                >
+                  View Resource
+                </Link>
+              </Box>
+            )}
+            
+            {plan.timeline && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <CalendarTodayIcon fontSize="small" color="action" />
+                <Typography variant="body2" color="text.secondary">
+                  {plan.timeline}
+                </Typography>
+              </Box>
+            )}
+          </Stack>
+        </CardContent>
+      </Card>
+    );
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Typography variant="h4">My Learning Plans</Typography>
-        <Button variant="contained" color="primary" onClick={() => setShowCreateModal(true)}>
-          Create New Plan
+    <Container maxWidth="lg" sx={{ py: 5 }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          mb: 4 
+        }}
+      >
+        <Box>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            sx={{ 
+              fontWeight: 700,
+              color: '#1976d2',
+              mb: 0.5
+            }}
+          >
+            My Learning Plans
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Track your learning progress and manage your education goals
+          </Typography>
+        </Box>
+        <Button 
+          variant="contained" 
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={() => setShowCreateModal(true)}
+          sx={{ 
+            borderRadius: 2,
+            px: 3,
+            py: 1,
+            fontWeight: 600,
+            boxShadow: 2,
+            '&:hover': {
+              boxShadow: 4
+            }
+          }}
+        >
+          Create Plan
         </Button>
       </Box>
       
-      {/* {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>} */}
-      
       {loading ? (
-        <Box display="flex" justifyContent="center" my={5}>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
           <CircularProgress />
         </Box>
       ) : plans.length === 0 ? (
-        <Card sx={{ textAlign: 'center', p: 5 }}>
-          <CardContent>
-            <Typography variant="h5" gutterBottom>No Learning Plans Found</Typography>
-            <Typography variant="body1" paragraph>
-              Create your first learning plan to start tracking your skills development journey.
-            </Typography>
-            <Button variant="contained" color="primary" onClick={() => setShowCreateModal(true)}>
-              Create New Plan
-            </Button>
-          </CardContent>
-        </Card>
+        <Paper 
+          sx={{ 
+            textAlign: 'center', 
+            p: 5, 
+            borderRadius: 2,
+            bgcolor: '#f5f9ff'
+          }}
+        >
+          <img 
+            src="/api/placeholder/240/180" 
+            alt="No plans" 
+            style={{ opacity: 0.7, marginBottom: 24 }}
+          />
+          <Typography variant="h5" gutterBottom sx={{ fontWeight: 600 }}>
+            No Learning Plans Found
+          </Typography>
+          <Typography variant="body1" paragraph sx={{ maxWidth: 600, mx: 'auto', mb: 3 }}>
+            Create your first learning plan to start tracking your skills development journey.
+            Define goals, set timelines, and monitor your progress all in one place.
+          </Typography>
+          <Button 
+            variant="contained" 
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setShowCreateModal(true)}
+            sx={{ 
+              borderRadius: 2,
+              px: 3,
+              py: 1,
+              fontWeight: 600
+            }}
+          >
+            Create First Plan
+          </Button>
+        </Paper>
       ) : (
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>Topics</TableCell>
-                <TableCell>Resource</TableCell>
-                <TableCell>Timeline</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {plans.map(plan => (
-                <TableRow key={plan.id}>
-                  <TableCell>{plan.title}</TableCell>
-                  <TableCell>{plan.description}</TableCell>
-                  <TableCell>
-                    {renderTopics(plan.topicsJson)}
-                  </TableCell>
-                  <TableCell>
-                    {plan.resourceLink ? (
-                      <Link href={plan.resourceLink} target="_blank" rel="noopener">
-                        Resource Link
-                      </Link>
-                    ) : (
-                      'No resource'
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {plan.timeline || 'Not specified'}
-                  </TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={plan.status || 'Not Started'} 
-                      color={getStatusColor(plan.status)}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Box>
-                      <Button 
-                        variant="outlined" 
-                        color="primary" 
-                        size="small" 
-                        sx={{ mr: 1 }}
-                        onClick={() => openEditModal(plan)}
-                      >
-                        Edit
-                      </Button>
-                      <Button 
-                        variant="outlined" 
-                        color="error" 
-                        size="small"
-                        onClick={() => openDeleteModal(plan)}
-                      >
-                        Delete
-                      </Button>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Grid className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {plans.map(plan => (
+            <Grid item key={plan.id}  className="flex-grow basis-[calc(33.333%-1.25rem)] flex flex-col gap-5">
+              {renderPlanCard(plan)}
+            </Grid>
+          ))}
+        </Grid>
       )}
       
       {/* Create Plan Modal */}
@@ -315,8 +495,15 @@ const LearningPlanDashboard = () => {
         onClose={() => setShowCreateModal(false)}
         fullWidth
         maxWidth="sm"
+        PaperProps={{
+          sx: { borderRadius: 2 }
+        }}
       >
-        <DialogTitle>Create Learning Plan</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
+            Create Learning Plan
+          </Typography>
+        </DialogTitle>
         <form onSubmit={handleCreatePlan}>
           <DialogContent>
             <TextField
@@ -351,6 +538,7 @@ const LearningPlanDashboard = () => {
               label="Resource Link"
               type="url"
               fullWidth
+              required
               name="resourceLink"
               value={formData.resourceLink}
               onChange={handleInputChange}
@@ -377,11 +565,12 @@ const LearningPlanDashboard = () => {
               label="Topics (comma separated)"
               type="text"
               fullWidth
-              value={getTopicsString()}
+              value={topicsInput}
               onChange={handleTopicsChange}
               placeholder="Spring Boot, JPA, REST API"
               variant="outlined"
               sx={{ mb: 2 }}
+              helperText="Enter topics separated by commas (e.g. React, Redux, TypeScript)"
             />
             
             <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
@@ -401,8 +590,12 @@ const LearningPlanDashboard = () => {
               </Select>
             </FormControl>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 2 }}>
-            <Button onClick={() => setShowCreateModal(false)} color="inherit">
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button 
+              onClick={() => setShowCreateModal(false)} 
+              color="inherit"
+              sx={{ fontWeight: 500 }}
+            >
               Cancel
             </Button>
             <Button 
@@ -411,6 +604,11 @@ const LearningPlanDashboard = () => {
               color="primary"
               disabled={loading}
               startIcon={loading && <CircularProgress size={20} />}
+              sx={{ 
+                px: 3,
+                borderRadius: 1.5,
+                fontWeight: 600
+              }}
             >
               {loading ? 'Creating...' : 'Create Plan'}
             </Button>
@@ -424,8 +622,15 @@ const LearningPlanDashboard = () => {
         onClose={() => setShowEditModal(false)}
         fullWidth
         maxWidth="sm"
+        PaperProps={{
+          sx: { borderRadius: 2 }
+        }}
       >
-        <DialogTitle>Edit Learning Plan</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
+            Edit Learning Plan
+          </Typography>
+        </DialogTitle>
         <form onSubmit={handleUpdatePlan}>
           <DialogContent>
             <TextField
@@ -486,11 +691,12 @@ const LearningPlanDashboard = () => {
               label="Topics (comma separated)"
               type="text"
               fullWidth
-              value={getTopicsString()}
+              value={topicsInput}
               onChange={handleTopicsChange}
               placeholder="Spring Boot, JPA, REST API"
               variant="outlined"
               sx={{ mb: 2 }}
+              helperText="Enter topics separated by commas (e.g. React, Redux, TypeScript)"
             />
             
             <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
@@ -510,8 +716,12 @@ const LearningPlanDashboard = () => {
               </Select>
             </FormControl>
           </DialogContent>
-          <DialogActions sx={{ px: 3, pb: 2 }}>
-            <Button onClick={() => setShowEditModal(false)} color="inherit">
+          <DialogActions sx={{ px: 3, pb: 3 }}>
+            <Button 
+              onClick={() => setShowEditModal(false)} 
+              color="inherit"
+              sx={{ fontWeight: 500 }}
+            >
               Cancel
             </Button>
             <Button 
@@ -520,6 +730,11 @@ const LearningPlanDashboard = () => {
               color="primary"
               disabled={loading}
               startIcon={loading && <CircularProgress size={20} />}
+              sx={{ 
+                px: 3,
+                borderRadius: 1.5,
+                fontWeight: 600
+              }}
             >
               {loading ? 'Updating...' : 'Update Plan'}
             </Button>
@@ -531,16 +746,27 @@ const LearningPlanDashboard = () => {
       <Dialog
         open={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}
+        PaperProps={{
+          sx: { borderRadius: 2 }
+        }}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Typography variant="h5" component="div" sx={{ fontWeight: 600, color: 'error.main' }}>
+            Confirm Delete
+          </Typography>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete the learning plan <strong>{currentPlan?.title}</strong>?
             This action cannot be undone.
           </DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setShowDeleteModal(false)} color="inherit">
+        <DialogActions sx={{ px: 3, pb: 3 }}>
+          <Button 
+            onClick={() => setShowDeleteModal(false)} 
+            color="inherit"
+            sx={{ fontWeight: 500 }}
+          >
             Cancel
           </Button>
           <Button 
@@ -549,6 +775,11 @@ const LearningPlanDashboard = () => {
             color="error"
             disabled={loading}
             startIcon={loading && <CircularProgress size={20} />}
+            sx={{ 
+              px: 3,
+              borderRadius: 1.5,
+              fontWeight: 600
+            }}
           >
             {loading ? 'Deleting...' : 'Delete Plan'}
           </Button>
