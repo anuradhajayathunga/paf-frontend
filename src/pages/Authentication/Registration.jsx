@@ -85,7 +85,7 @@ const Registration = () => {
                   className="text-red-500 text-sm"
                 />
               </div>
-              <div className="relative mb-6">
+              {/* <div className="relative mb-6">
                 <Field
                   as={TextField}
                   type="text"
@@ -100,7 +100,7 @@ const Registration = () => {
                   component="div"
                   className="text-red-500 text-sm"
                 />
-              </div>
+              </div> */}
               <div className="relative mb-6">
                 <Field
                   as={TextField}
