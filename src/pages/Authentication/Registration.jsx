@@ -9,7 +9,7 @@ import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
 import { toast } from "react-toastify";
 
-const initialValues = { fname: "", lname: "", email: "", password: "" };
+const initialValues = { fname: "", lname: "", email: "", password: "", confirmPassword: "" };
 
 const validationSchema = Yup.object({
   fname: Yup.string().required("First name is required"),
@@ -17,25 +17,35 @@ const validationSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string()
     .min(4, "Password must be at least 4 characters.")
+    .matches(
+      /[!@#$%^&*(),.?":{}|<>]/,
+      "Password must contain at least one special character."
+    )
     .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Confirm password is required"),
 });
 
 const Registration = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     console.log("handleSubmit", values);
     try {
-      const success = dispatch(registerUserAction(values));
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...userData } = values;
+      const success = dispatch(registerUserAction(userData));
       if (success) {
         navigate("/login");
       } else {
         toast.error("Invalid credentials. Please try again.");
       }
     } catch (err) {
-      toast.error("Something went wrong during login.");
+      toast.error("Something went wrong during registration.");
     }
   };
 
@@ -147,24 +157,24 @@ const Registration = () => {
               <div className="relative mb-6">
                 <Field
                   as={TextField}
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Password"
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
                   variant="outlined"
                   fullWidth
                   className="outline-none flex-1 pr-10 border caret-blue-900 w-full peer placeholder:text-gray-400 placeholder:text-text placeholder:font-chivo border-[#C2C8D0] rounded-[4px] py-[14px] pl-[16px] focus:border-blue-900 focus:border-[2px]"
                 />
                 <ErrorMessage
-                  name="password"
+                  name="confirmPassword"
                   component="div"
                   className="text-red-500 text-sm"
                 />
                 <button
                   type="button"
                   className="absolute top-1/2 right-[12px] transform -translate-y-1/2 text-gray-500 hover:text-blue-900"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
-                  {showPassword ? (
+                  {showConfirmPassword ? (
                     <VisibilityOffIcon fontSize="small" />
                   ) : (
                     <VisibilityIcon fontSize="small" />
