@@ -1,0 +1,24 @@
+// Fetch all learning plans
+export const FETCH_PLANS_REQUEST = 'FETCH_PLANS_REQUEST';
+export const FETCH_PLANS_SUCCESS = 'FETCH_PLANS_SUCCESS';
+export const FETCH_PLANS_FAILURE = 'FETCH_PLANS_FAILURE';
+
+// Fetch single learning plan
+export const FETCH_PLAN_REQUEST = 'FETCH_PLAN_REQUEST';
+export const FETCH_PLAN_SUCCESS = 'FETCH_PLAN_SUCCESS';
+export const FETCH_PLAN_FAILURE = 'FETCH_PLAN_FAILURE';
+
+// Create learning plan
+export const CREATE_PLAN_REQUEST = 'CREATE_PLAN_REQUEST';
+export const CREATE_PLAN_SUCCESS = 'CREATE_PLAN_SUCCESS';
+export const CREATE_PLAN_FAILURE = 'CREATE_PLAN_FAILURE';
+
+// Update learning plan
+export const UPDATE_PLAN_REQUEST = 'UPDATE_PLAN_REQUEST';
+export const UPDATE_PLAN_SUCCESS = 'UPDATE_PLAN_SUCCESS';
+export const UPDATE_PLAN_FAILURE = 'UPDATE_PLAN_FAILURE';
+
+// Delete learning plan
+export const DELETE_PLAN_REQUEST = 'DELETE_PLAN_REQUEST';
+export const DELETE_PLAN_SUCCESS = 'DELETE_PLAN_SUCCESS';
+export const DELETE_PLAN_FAILURE = 'DELETE_PLAN_FAILURE';
