@@ -2,7 +2,7 @@
 
 > A modern platform for photographers to share skills, learn techniques, and connect with the global photography community.
 
-![ShutterSync](https://img.shields.io/badge/ShutterSync-1.0.0-brightgreen)
+![ShutterSync](https://github.com/anuradhajayathunga/paf-frontend/blob/oauth2-branch/signup.png)
 ![React](https://img.shields.io/badge/React-18.2.0-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
