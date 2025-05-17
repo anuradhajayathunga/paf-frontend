@@ -5,19 +5,22 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google"; // ✅ Add this
 import { store } from "./Redux/store";
-// import reportWebVitals from "./reportWebVitals";
+
+// Replace this with your actual Google Client ID
+const GOOGLE_CLIENT_ID =
+  "775860752364-7e23ofiregutp36u5ldenrbs7evbhse3.apps.googleusercontent.com";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </Provider>
   </React.StrictMode>
 );
-
-// Optional: performance monitoring
-// reportWebVitals(console.log);

@@ -10,12 +10,12 @@ const ProfileCard = () => {
       {/* Cover + Avatar */}
       <div className="relative h-32">
         <img
-          src={user?.cover || "/assets/avatars/def.jpeg"}
+          src={user?.cover || "/assets/cover/def.jpg"}
           alt="Cover"
           className="rounded-md object-cover w-full h-full"
         />
         <img
-          src={user?.avatar || "/assets/cover/def.jpeg"}
+          src={user?.avatar || "/assets/avatars/def.jpeg"}
           alt="Avatar"
           width={48}
           height={48}

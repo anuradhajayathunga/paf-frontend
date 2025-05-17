@@ -34,7 +34,7 @@ const Post = ({ item }) => {
   const dispatch = useDispatch();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
-  const { auth, post } = useSelector((store) => store);
+  const { auth } = useSelector((store) => store);
   const user = auth?.user;
   const isOwner = user?.id === item?.user?.id;
 
@@ -61,13 +61,13 @@ const Post = ({ item }) => {
     try {
       // Dispatch the like action
       await dispatch(likePostAction(item.id || item._id));
-      
+
       // Toggle the liked state for immediate UI feedback
       setLiked(!liked);
-      
+
       // Refresh the posts to update the UI with the latest data
       await dispatch(getAllPostAction());
-      
+
       if (!liked) {
         toast.success("Post liked successfully!");
       }
@@ -142,7 +142,7 @@ const Post = ({ item }) => {
     if (item?.likes && user?._id) {
       setLiked(item.likes.includes(user._id));
     }
-    
+
     if (item?.savedByUsers && user?._id) {
       setIsSaved(item.savedByUsers.includes(user._id));
     }
@@ -373,7 +373,7 @@ const Post = ({ item }) => {
                     <div className="w-full h-[600px] flex items-center justify-center bg-white">
                       <img
                         src={imgUrl}
-                        alt={`Post Image ${idx + 1}`}
+                        alt={`Post ${idx + 1}`}
                         className="object-contain max-h-full max-w-full"
                       />
                     </div>
