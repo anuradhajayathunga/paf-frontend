@@ -1,14 +1,47 @@
-# Getting Started with Create React App
+# ShutterSync 📸
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> A modern platform for photographers to share skills, learn techniques, and connect with the global photography community.
 
-## Available Scripts
+![ShutterSync](https://github.com/anuradhajayathunga/paf-frontend/blob/oauth2-branch/signup.png)
+![React](https://img.shields.io/badge/React-18.2.0-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+## ✨ Overview
+
+ShutterSync is a dynamic web application built with React that brings photographers together through interactive learning and skill sharing. Whether you're a beginner looking to learn composition basics or a professional wanting to share advanced lighting techniques, ShutterSync provides the tools and community to elevate your photography journey.
+
+![ShutterSync Preview](/api/placeholder/800/400)
+
+## 🚀 Features
+
+- **Interactive Tutorials** - Learn photography skills through step-by-step guides
+- **Community Portfolios** - Showcase your work and receive constructive feedback
+- **Skill Exchange** - Connect with other photographers for mutual learning
+- **Live Workshops** - Participate in scheduled virtual photography sessions
+- **Resource Library** - Access a curated collection of photography resources
+
+## 🛠️ Installation
+
+Clone the repository and install dependencies:
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/shuttersync.git
+
+# Navigate to project directory
+cd shuttersync
+
+# Install dependencies
+npm install
+```
+
+## 📋 Available Scripts
 
 In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
@@ -16,55 +49,82 @@ You may also see any lint errors in the console.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
 
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The build is optimized and minified for the best performance.
 
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This gives you full control over the configuration files and dependencies.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 🧩 Project Structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+shuttersync/
+├── public/
+│   ├── index.html
+│   └── assets/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── services/
+│   ├── context/
+│   ├── hooks/
+│   ├── utils/
+│   ├── App.js
+│   └── index.js
+└── package.json
+```
 
-## Learn More
+## 🔧 Technologies
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- React 18
+- React Router
+- Context API for state management
+- CSS Modules / Styled Components
+- Jest for testing
+- Firebase (Authentication, Storage, Database)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 🌐 Deployment
 
-### Code Splitting
+ShutterSync can be deployed to various platforms:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **Vercel**: For seamless deployment with GitHub integration
+- **Netlify**: For easy continuous deployment
+- **Firebase Hosting**: For integrated hosting with Firebase services
+- **AWS Amplify**: For scalable cloud hosting
 
-### Analyzing the Bundle Size
+For detailed deployment instructions, see the [deployment documentation](https://example.com/deployment).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🤝 Contributing
 
-### Making a Progressive Web App
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Advanced Configuration
+## 📄 License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-### Deployment
+## 📬 Contact
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Have questions or want to contribute? Reach out to us:
 
-### `npm run build` fails to minify
+- Email: contact@shuttersync.com
+- Twitter: [@shuttersync](https://twitter.com/shuttersync)
+- Website: [www.shuttersync.com](https://www.shuttersync.com)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+<p align="center">
+  Made with ❤️ by the ShutterSync Team
+</p>
