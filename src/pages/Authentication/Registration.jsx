@@ -8,8 +8,16 @@ import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { registerUserAction } from "../../Redux/Auth/auth.action";
 import { toast } from "react-toastify";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
-const initialValues = { fname: "", lname: "", email: "", password: "", confirmPassword: "" };
+const initialValues = {
+  fname: "",
+  lname: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const validationSchema = Yup.object({
   fname: Yup.string().required("First name is required"),
@@ -49,12 +57,31 @@ const Registration = () => {
     }
   };
 
+  // Initialize Google login
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await axios.post("http://localhost:8080/api/auth/google", {
+          token: tokenResponse.credential || tokenResponse.access_token,
+        });
+
+        localStorage.setItem("token", res.data.token);
+        navigate("/dashboard");
+      } catch (err) {
+        console.error("Google login error:", err);
+      }
+    },
+    onError: () => {
+      console.error("Google login failed");
+    },
+  });
+
   return (
     <>
       <h2 className="font-bold font-chivo text-[40px] leading-[30px] md:text-heading-3 mb-[50px]">
         Let's join us
       </h2>
-      <button type="button">
+      <button type="button" onClick={() => login()}>
         <div className="flex items-center z-10 relative transition-all duration-200 group py-[13px] md:px-[120px] px-[80px] rounded-md bg-white text-gray-500 hover:text-gray-900 flex-row-reverse w-fit mb-[30px]">
           <span className="block text-inherit w-full h-full rounded-md text-md font-chivo font-semibold">
             Sign Up with Google
