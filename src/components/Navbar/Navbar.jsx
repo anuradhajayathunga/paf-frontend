@@ -214,14 +214,16 @@ const Navbar = () => {
         >
           {isAuthenticated ? (
             <>
-              <div className="hidden lg:flex flex-col items-start">
-                <span className="hidden lg:inline text-md font-semibold">
-                  Hello 👋,
-                </span>
-                <span className="hidden md:inline text-xs font-medium text-gray-600">
-                  {user?.fname || "User"}
-                </span>
-              </div>
+              {user?.id && (
+                <div className="hidden lg:flex flex-col items-start">
+                  <span className="hidden lg:inline text-md font-semibold">
+                    Hello👋
+                  </span>
+                  <span className="hidden md:inline text-sm font-medium text-gray-600">
+                    {user?.fname || "John Doe"}
+                  </span>
+                </div>
+              )}
 
               <Avatar
                 alt={user?.fname || user?.avatar}
@@ -234,7 +236,7 @@ const Navbar = () => {
                   fontWeight: "bold",
                 }}
               >
-                {!user?.avatar && (user?.fname?.[0]?.toUpperCase() || "U")}
+                {!user?.avatar && (user?.fname?.[0]?.toUpperCase() || "S")}
               </Avatar>
             </>
           ) : (

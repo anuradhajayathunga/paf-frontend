@@ -43,7 +43,10 @@ const MobileMenu = () => {
         {/* Menu Overlay */}
         {isOpen && (
           <div className="fixed left-0 top-20 w-full h-[calc(100vh-2rem)] p-6 bg-blue-100/60 backdrop-blur-md flex flex-col items-center justify-center gap-8 font-medium text-lg text-slate-800 z-50">
-            <Link to="/" className="rounded-lg hover:bg-slate-100">
+            <Link
+              to="/"
+              className="w-full text-center rounded-md px-4 py-2 hover:bg-white/20 hover:text-blue-800 transition duration-200"
+            >
               Home
             </Link>
             <Link
@@ -53,7 +56,7 @@ const MobileMenu = () => {
               Friends
             </Link>
             <Link
-              to="/"
+              to="/courses"
               className="w-full text-center rounded-md px-4 py-2 hover:bg-white/20 hover:text-blue-800 transition duration-200"
             >
               Courses

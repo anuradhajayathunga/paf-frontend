@@ -78,7 +78,7 @@ const Registration = () => {
 
   return (
     <>
-      <h2 className="font-bold font-chivo text-[40px] leading-[30px] md:text-heading-3 mb-[50px]">
+      <h2 className="font-bold font-chivo text-[40px] leading-[30px] md:text-heading-3 mb-[20px]">
         Let's join us
       </h2>
       <button type="button" onClick={() => login()}>
@@ -104,7 +104,7 @@ const Registration = () => {
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="bg-white w-full p-8 shadow-3 rounded-[6px] md:p-12">
+          <Form className="bg-white w-full p-5 shadow-3 rounded-[6px] md:p-6">
             <div className="">
               <div className="relative mb-6">
                 <Field
@@ -122,7 +122,7 @@ const Registration = () => {
                   className="text-red-500 text-sm"
                 />
               </div>
-              {/* <div className="relative mb-6">
+              <div className="relative mb-6">
                 <Field
                   as={TextField}
                   type="text"
@@ -137,7 +137,7 @@ const Registration = () => {
                   component="div"
                   className="text-red-500 text-sm"
                 />
-              </div> */}
+              </div>
               <div className="relative mb-6">
                 <Field
                   as={TextField}
