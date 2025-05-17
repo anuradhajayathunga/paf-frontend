@@ -58,7 +58,7 @@ export const getAllPostAction = () => async (dispatch) => {
   try {
     const { data } = await api.get("/posts");
     dispatch({ type: GET_ALL_POST_SUCCESS, payload: data });
-    console.log("AllPosts -->", data);
+    // console.log("AllPosts -->", data);
   } catch (error) {
     console.error("Error getting posts -->", error);
     dispatch({

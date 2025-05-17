@@ -6,6 +6,7 @@ import { logoutUserAction } from "../../Redux/Auth/auth.action";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { searchPostAction } from "../../Redux/Post/post.action";
 import SearchResults from "./SearchResults"; // Import the new component
+import { Avatar } from "@mui/material";
 
 const Navbar = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -209,16 +210,32 @@ const Navbar = () => {
         {/* USER MENU DROPDOWN */}
         <button
           onClick={() => setShowMenu((prev) => !prev)}
-          className="flex items-center gap-2 text-sm text-blue-600 hover:underline"
+          className="flex items-center gap-2 text-sm text-blue-600 "
         >
           {isAuthenticated ? (
             <>
-              <img
-                src={user?.avatar || "/login.png"}
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover"
-              />
-              {/* <span className="hidden md:inline">{user?.fname || "User"}</span> */}
+              <div className="hidden lg:flex flex-col items-start">
+                <span className="hidden lg:inline text-md font-semibold">
+                  Hello 👋,
+                </span>
+                <span className="hidden md:inline text-xs font-medium text-gray-600">
+                  {user?.fname || "User"}
+                </span>
+              </div>
+
+              <Avatar
+                alt={user?.fname || user?.avatar}
+                src={user?.avatar}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  bgcolor: user?.avatar ? "transparent" : "primary.main", // or use 'blue' or a specific color
+                  color: "white", // ensure the letter is visible on blue
+                  fontWeight: "bold",
+                }}
+              >
+                {!user?.avatar && (user?.fname?.[0]?.toUpperCase() || "U")}
+              </Avatar>
             </>
           ) : (
             <>
