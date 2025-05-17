@@ -43,12 +43,12 @@ const Home = () => {
   return (
     <div className="flex gap-6 pt-4 px-2">
       {/* Left Sidebar */}
-      <div className="hidden xl:block w-[20%] sticky top-24 h-screen">
+      <div className="hidden xl:block w-[30%] sticky top-24 h-screen">
         <LeftMenu type="home" />
       </div>
 
       {/* Center Feed */}
-      <div className="w-full lg:w-[60%] xl:w-[50%] mt-2">
+      <div className="w-full lg:w-[50%] xl:w-[50%] mt-2">
         <div className="flex flex-col gap-6">
           <AddPost />
           <Feed type="home" />
@@ -56,7 +56,7 @@ const Home = () => {
       </div>
 
       {/* Right Sidebar */}
-      <div className="hidden lg:block w-[25%] mt-2">
+      <div className="hidden lg:block w-[30%] mt-2">
         <RightMenu />
       </div>
     </div>
