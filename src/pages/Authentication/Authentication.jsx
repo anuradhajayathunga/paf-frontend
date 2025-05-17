@@ -40,7 +40,7 @@ const Authentication = ({ page }) => {
       
       {page === "login" ? <img
         className="w-full h-[91vh] object-cover  top-0 left-0 "
-        src="/assets/signin.png"
+        src="/assets/signup.png"
         alt="auth-cover-bg"
       /> : <img
         className="w-full h-[91vh] object-cover  top-0 left-0 "

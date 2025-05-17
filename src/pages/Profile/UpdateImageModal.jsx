@@ -26,9 +26,6 @@ const modalStyle = {
   p: 4,
 };
 
-const CLOUDINARY_UPLOAD_PRESET = "your_upload_preset"; // ✅ Replace with your preset
-const CLOUDINARY_CLOUD_NAME = "your_cloud_name"; // ✅ Replace with your cloud name
-const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
 
 const UpdateImageModal = ({ open, onClose }) => {
   const { auth } = useSelector((store) => store);

@@ -44,7 +44,7 @@ const ProfilePage = () => {
             <img
               src={
                 user?.cover ||
-                "https://images.pexels.com/photos/2901913/pexels-photo-2901913.jpeg?auto=compress&cs=tinysrgb&w=600"
+                "/assets/cover/def.jpg"
               }
               alt="Cover"
               className="object-cover w-full h-full"
@@ -62,7 +62,7 @@ const ProfilePage = () => {
               <img
                 src={
                   user?.avatar ||
-                  "https://images.pexels.com/photos/2901913/pexels-photo-2901913.jpeg?auto=compress&cs=tinysrgb&w=600"
+                  "/assets/avatars/def.jpeg"
                 }
                 alt="Profile Avatar"
                 className="rounded-full ring-4 ring-white object-cover shadow-md w-full h-full"

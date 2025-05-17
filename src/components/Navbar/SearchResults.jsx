@@ -74,7 +74,7 @@ const SearchResults = ({ results, loading, error, onClose }) => {
                   <div>
                     <img
                       src={post.images[0]}
-                      alt="Post Image 1"
+                      alt="Post"
                       className="w-12 h-12 object-cover rounded mr-3"
                     />
                   </div>

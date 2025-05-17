@@ -6,16 +6,11 @@ import { fetchPostDetails } from "../../Redux/Post/postDetails.action";
 import LeftMenu from "../LeftMenu/LeftMenu";
 import RightMenu from "../RightMenu/RightMenu";
 import Comments from "./Comments";
-import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { blue } from "@mui/material/colors";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
-import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 const PostDetails = () => {
@@ -205,7 +200,7 @@ const PostDetails = () => {
                             <div className="w-full h-[600px] flex items-center justify-center bg-white">
                               <img
                                 src={imgUrl}
-                                alt={`Post Image ${idx + 1}`}
+                                alt={`Post ${idx + 1}`}
                                 className="object-contain max-h-full max-w-full"
                               />
                             </div>

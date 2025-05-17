@@ -6,23 +6,26 @@ import { getUserPostAction } from "../Redux/Post/post.action";
 const ProfileFeed = ({ type, userId }) => {
   const dispatch = useDispatch();
 
-  // Fetch posts from Redux state
   const { userPosts, loading, error } = useSelector((state) => state.post);
 
-  // Fetch user posts on mount or userId change
   useEffect(() => {
     if (type === "profile" && userId) {
       dispatch(getUserPostAction(userId));
     }
   }, [dispatch, type, userId]);
 
+  // ✅ Sort posts by updatedAt descending
+  const sortedPosts = [...(userPosts || [])].sort(
+    (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+  );
+
   return (
     <div className="p-4 bg-white shadow-md rounded-lg flex flex-col gap-12">
       {loading && <p>Loading posts...</p>}
       {/* {error && <p className="text-red-500">{error}</p>} */}
 
-      {userPosts && userPosts.length > 0 ? (
-        userPosts.map((post) => <Post key={post._id} item={post} />)
+      {sortedPosts.length > 0 ? (
+        sortedPosts.map((post) => <Post key={post._id} item={post} />)
       ) : (
         !loading && <p>No posts found.</p>
       )}
