@@ -26,7 +26,7 @@ const Ads = ({ size }) => {
           }`}
         >
           <img
-            src="https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&cs=tinysrgb&w=600"
+            src="https://i.pinimg.com/736x/e8/7b/90/e87b908f816103d1a3260201cf59c323.jpg"
             alt="Ad Banner"
             className="object-cover transition-transform duration-300 hover:scale-105"
             style={{ width: "100%", height: "100%" }}
@@ -36,13 +36,13 @@ const Ads = ({ size }) => {
         {/* Ad Info */}
         <div className="flex items-center gap-3">
           <img
-            src="https://images.pexels.com/photos/1671325/pexels-photo-1671325.jpeg?auto=compress&cs=tinysrgb&w=600"
+            src="https://i.pinimg.com/736x/3e/09/93/3e0993cdcb30c7e89d208fb7a5b38521.jpg"
             alt="Ad Avatar"
             width={24}
             height={24}
             className="rounded-full w-6 h-6 object-cover border"
           />
-          <span className="text-blue-500 font-semibold">Brand Name</span>
+          <span className="text-blue-500 font-semibold">Online courses to master your photography</span>
         </div>
 
         {/* Ad Description */}
@@ -52,10 +52,10 @@ const Ads = ({ size }) => {
           } leading-snug`}
         >
           {size === "sm"
-            ? "Lorem ipsum dolor sit amet consectetur, adipisicing elit."
+            ? "Learn photography from the ground up — from camera basics to advanced composition. Perfect for beginners and hobbyists looking to level up their skills with hands-on online courses."
             : size === "md"
-            ? "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Exercitationem magnam delectus dignissimos id veritatis."
-            : "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Exercitationem magnam delectus dignissimos id veritatis asperiores laboriosam animi eius nulla esse ipsam illo quod inventore, laudantium quo fugiat expedita repellat libero."}
+            ? "Learn photography from the ground up — from camera basics to advanced composition."
+            : "Learn photography from the ground up — from camera basics to advanced composition. Perfect for beginners and hobbyists looking to level up their skills with hands-on online courses."}
         </p>
 
         {/* Action Button */}

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import ProfileCard from "./ProfileCard";
-import  { LeftMenuNavigation } from "./LeftMenuNavigation";
+import { LeftMenuNavigation } from "./LeftMenuNavigation";
 import Ads from "../Ads";
 
 const LeftMenu = ({ type }) => {
@@ -24,7 +24,7 @@ const LeftMenu = ({ type }) => {
           </div>
         ))}
       </div>
-      {/* <Ads size="sm" /> */}
+      <Ads size="sm" />
     </div>
   );
 };

@@ -44,7 +44,7 @@ const ProfilePage = () => {
             <img
               src={
                 user?.cover ||
-                "/assets/cover/def.jpg"
+                "/assets/cover/def.jpeg"
               }
               alt="Cover"
               className="object-cover w-full h-full"
