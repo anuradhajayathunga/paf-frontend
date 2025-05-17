@@ -7,6 +7,8 @@ import * as Yup from "yup";
 import { loginUserAction } from "../../Redux/Auth/auth.action";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useGoogleLogin } from "@react-oauth/google";
+import { api } from "../../config/api"; // ✅ Using centralized Axios instance
 
 const initialValues = { email: "", password: "" };
 
@@ -36,20 +38,42 @@ const Login = () => {
     }
   };
 
+  // ✅ Google Login using centralized api instance
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const res = await api.post("/api/auth/google", {
+          token: tokenResponse.credential || tokenResponse.access_token,
+        });
+
+        localStorage.setItem("token", res.data.token);
+        toast.success("Google login successful!");
+        navigate("/dashboard");
+      } catch (err) {
+        toast.error("Google login failed.");
+        console.error("Google login error:", err);
+      }
+    },
+    onError: () => {
+      toast.error("Google login failed.");
+      console.error("Google login failed");
+    },
+  });
+
   return (
     <>
       <h2 className="font-bold font-chivo text-[40px] leading-[30px] md:text-heading-3 mb-[50px]">
         Welcome back.
       </h2>
 
-      <button type="button">
+      <button type="button" onClick={() => login()}>
         <div className="flex items-center z-10 relative transition-all duration-200 group py-[13px] md:px-[120px] px-[80px] rounded-md bg-white text-gray-500 hover:text-gray-900 flex-row-reverse w-fit mb-[30px]">
           <span className="block text-inherit w-full h-full rounded-md text-md font-chivo font-semibold">
             Sign In with Google
           </span>
           <img
             className="mr-5"
-            src="assets/images/icons/Icon-google.svg"
+            src="/assets/images/icons/Icon-google.svg"
             alt="google icon"
           />
         </div>

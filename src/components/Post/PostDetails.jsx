@@ -1,13 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { fetchPostDetails } from "../../Redux/Post/postDetails.action";
 import LeftMenu from "../LeftMenu/LeftMenu";
 import RightMenu from "../RightMenu/RightMenu";
+import Comments from "./Comments";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import { blue } from "@mui/material/colors";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import ThumbUpOutlinedIcon from "@mui/icons-material/ThumbUpOutlined";
+import ThumbUpIcon from "@mui/icons-material/ThumbUp";
+import TurnedInNotRoundedIcon from "@mui/icons-material/TurnedInNotRounded";
+import TurnedInRoundedIcon from "@mui/icons-material/TurnedInRounded";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import ArrowBackIosRoundedIcon from "@mui/icons-material/ArrowBackIosRounded";
 const PostDetails = () => {
   const dispatch = useDispatch();
   const { id } = useParams(); // Assumes route is like /post/:id
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
 
   const { post, loading, error } = useSelector((state) => state.postDetails);
   const { user } = useSelector((state) => state.auth);
@@ -116,7 +131,7 @@ const PostDetails = () => {
               </Link>
 
               {/* Options Menu (if post belongs to current user) */}
-              {user && user.id === post.user.id && (
+              {/* {user && user.id === post.user.id && (
                 <div className="ml-auto relative">
                   <button className="p-1 hover:bg-gray-100 rounded-full">
                     <svg
@@ -134,9 +149,8 @@ const PostDetails = () => {
                       <circle cx="5" cy="12" r="1"></circle>
                     </svg>
                   </button>
-                  {/* Dropdown menu would go here */}
                 </div>
-              )}
+              )} */}
             </div>
 
             {/* Post Content */}
@@ -145,16 +159,73 @@ const PostDetails = () => {
                 <p className="text-gray-800 mb-4">{post.caption}</p>
               )}
 
-              {/* Post Image */}
-              {post.images && (
-                <div className="mb-4">
-                  <img
-                    src={post.images}
-                    alt="Post content"
-                    className="w-full h-auto rounded-md object-cover max-h-[600px]"
-                  />
+              {/* Post Image / Video */}
+              <div className="flex flex-col gap-4">
+                <div className="relative w-full">
+                  {/* Custom Navigation Buttons */}
+                  <div className="absolute top-1/2 left-5 z-10 -translate-y-1/2">
+                    <button
+                      ref={prevRef}
+                      className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
+                    >
+                      <ArrowBackIosRoundedIcon />
+                    </button>
+                  </div>
+
+                  <div className="absolute top-1/2 right-5 z-10 -translate-y-1/2">
+                    <button
+                      ref={nextRef}
+                      className="w-12 h-12 xl:w-16 xl:h-16 bg-blue-100/40 border border-white rounded-full hover:bg-c-green-300 flex items-center justify-center"
+                    >
+                      <ArrowForwardIosRoundedIcon />
+                    </button>
+                  </div>
+
+                  {/* Swiper Component */}
+                  <div className="w-full max-h-[800px] relative overflow-hidden rounded-md bg-white">
+                    <Swiper
+                      modules={[Navigation, Autoplay]}
+                      spaceBetween={30}
+                      slidesPerView={1}
+                      loop={true}
+                      navigation={{
+                        prevEl: prevRef.current,
+                        nextEl: nextRef.current,
+                      }}
+                      onInit={(swiper) => {
+                        swiper.params.navigation.prevEl = prevRef.current;
+                        swiper.params.navigation.nextEl = nextRef.current;
+                        swiper.navigation.init();
+                        swiper.navigation.update();
+                      }}
+                    >
+                      {Array.isArray(post?.images) &&
+                        post.images.map((imgUrl, idx) => (
+                          <SwiperSlide key={idx}>
+                            <div className="w-full h-[600px] flex items-center justify-center bg-white">
+                              <img
+                                src={imgUrl}
+                                alt={`Post Image ${idx + 1}`}
+                                className="object-contain max-h-full max-w-full"
+                              />
+                            </div>
+                          </SwiperSlide>
+                        ))}
+                      {post?.video && (
+                        <SwiperSlide>
+                          <video
+                            src={post.video}
+                            controls
+                            muted
+                            autoPlay={true}
+                            className="w-full h-auto max-h-[600px] rounded-lg object-contain"
+                          />
+                        </SwiperSlide>
+                      )}
+                    </Swiper>
+                  </div>
                 </div>
-              )}
+              </div>
 
               {/* Post Stats */}
               <div className="flex items-center justify-between text-gray-500 text-sm mt-2">
@@ -175,53 +246,30 @@ const PostDetails = () => {
                   isLiked ? "text-blue-500" : "text-gray-600"
                 } hover:bg-gray-50`}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill={isLiked ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                </svg>
+                <ThumbUpIcon/>
                 <span>Like</span>
               </button>
               <button
                 className="flex-1 py-2 flex justify-center items-center gap-1 text-gray-600 hover:bg-gray-50"
                 onClick={() => document.getElementById("comment-input").focus()}
               >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-                </svg>
+                <img
+              src="/comment.png"
+              alt="Comment"
+              width={16}
+              height={16}
+              className="cursor-pointer"
+            />
                 <span>Comment</span>
               </button>
               <button className="flex-1 py-2 flex justify-center items-center gap-1 text-gray-600 hover:bg-gray-50">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                  <polyline points="16 6 12 2 8 6"></polyline>
-                  <line x1="12" y1="2" x2="12" y2="15"></line>
-                </svg>
+               <img
+              src="/share.png"
+              alt="Comment"
+              width={16}
+              height={16}
+              className="cursor-pointer"
+            />
                 <span>Share</span>
               </button>
             </div>
@@ -277,35 +325,7 @@ const PostDetails = () => {
               {/* Comments List */}
               <div className="space-y-3">
                 {post.comments && post.comments.length > 0 ? (
-                  post.comments.map((comment) => (
-                    <div key={comment.id} className="flex">
-                      <Link to={`/profile/${comment.user.id}`}>
-                        <img
-                          src={
-                            comment.user.avatar || "/assets/avatars/def.jpeg"
-                          }
-                          alt={comment.user.fname}
-                          className="w-8 h-8 rounded-full object-cover mr-2"
-                        />
-                      </Link>
-                      <div className="flex-1">
-                        <div className="bg-gray-100 rounded-lg px-3 py-2">
-                          <Link
-                            to={`/profile/${comment.user.id}`}
-                            className="font-medium text-gray-800 capitalize"
-                          >
-                            {comment.user.fname} {comment.user.lname}
-                          </Link>
-                          <p className="text-gray-700">{comment.text}</p>
-                        </div>
-                        <div className="flex items-center gap-3 mt-1 ml-1 text-xs text-gray-500">
-                          <span>{moment(comment.createdAt).fromNow()}</span>
-                          <button className="hover:underline">Like</button>
-                          <button className="hover:underline">Reply</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
+                  <Comments item={post} />
                 ) : (
                   <p className="text-gray-500 text-center py-4">
                     No comments yet. Be the first to comment!

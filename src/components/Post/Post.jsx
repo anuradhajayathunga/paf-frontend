@@ -61,13 +61,13 @@ const Post = ({ item }) => {
     try {
       // Dispatch the like action
       await dispatch(likePostAction(item.id || item._id));
-      
+
       // Toggle the liked state for immediate UI feedback
       setLiked(!liked);
-      
+
       // Refresh the posts to update the UI with the latest data
       await dispatch(getAllPostAction());
-      
+
       if (!liked) {
         toast.success("Post liked successfully!");
       }
@@ -142,7 +142,7 @@ const Post = ({ item }) => {
     if (item?.likes && user?._id) {
       setLiked(item.likes.includes(user._id));
     }
-    
+
     if (item?.savedByUsers && user?._id) {
       setIsSaved(item.savedByUsers.includes(user._id));
     }
