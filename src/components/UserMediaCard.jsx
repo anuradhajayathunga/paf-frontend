@@ -78,11 +78,13 @@ const SavedPostsSection = () => {
               className="relative aspect-square rounded-lg overflow-hidden group cursor-pointer"
             >
               <Link to={`/post/${post.id}`}>
-                <img
-                  src={post.mediaUrl || post.images || "/placeholder-image.jpg"}
-                  alt={post.caption || `saved-post-${index}`}
-                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                />
+                <video
+                            src={post.video}
+                            controls
+                            muted
+                            autoPlay={true}
+                            className="w-full h-auto max-h-[600px] rounded-lg object-contain"
+                          />
                 <div>{post?.caption}</div>
                 {/* Optional overlay for caption or like count */}
                 <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity flex items-center justify-center opacity-0 hover:opacity-100">

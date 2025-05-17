@@ -1,5 +1,4 @@
-// components/UpdateImageModal.jsx
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   Box,
@@ -7,11 +6,13 @@ import {
   Button,
   IconButton,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { updateProfileAction } from "../../Redux/Auth/auth.action";
+import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
 
 const modalStyle = {
   position: "absolute",
@@ -25,10 +26,15 @@ const modalStyle = {
   p: 4,
 };
 
+const CLOUDINARY_UPLOAD_PRESET = "your_upload_preset"; // ✅ Replace with your preset
+const CLOUDINARY_CLOUD_NAME = "your_cloud_name"; // ✅ Replace with your cloud name
+const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`;
+
 const UpdateImageModal = ({ open, onClose }) => {
   const { auth } = useSelector((store) => store);
   const user = auth?.user;
   const dispatch = useDispatch();
+  const [uploading, setUploading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -50,6 +56,24 @@ const UpdateImageModal = ({ open, onClose }) => {
     },
   });
 
+  // 📤 Cloudinary Upload Handler
+  const handleUpload = async (e, field) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const url = await uploadToCloudinary(file); 
+      if (url) {
+        formik.setFieldValue(field, url);
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={modalStyle}>
@@ -65,8 +89,8 @@ const UpdateImageModal = ({ open, onClose }) => {
           </IconButton>
         </Box>
 
-        {/* ✅ Wrap form here */}
         <form onSubmit={formik.handleSubmit}>
+          {/* Avatar Upload */}
           <TextField
             name="avatar"
             label="Avatar URL"
@@ -75,7 +99,18 @@ const UpdateImageModal = ({ open, onClose }) => {
             onChange={formik.handleChange}
             margin="normal"
           />
+          <span className="">OR</span>
+          <Button variant="outlined" component="label" fullWidth>
+            Upload Avatar
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={(e) => handleUpload(e, "avatar")}
+            />
+          </Button>
 
+          {/* Cover Upload */}
           <TextField
             name="cover"
             label="Cover Photo URL"
@@ -84,9 +119,27 @@ const UpdateImageModal = ({ open, onClose }) => {
             onChange={formik.handleChange}
             margin="normal"
           />
+          <span className="">OR</span>
+
+          <Button variant="outlined" component="label" fullWidth>
+            Upload Cover Photo
+            <input
+              type="file"
+              hidden
+              accept="image/*"
+              onChange={(e) => handleUpload(e, "cover")}
+            />
+          </Button>
+
+          {/* Loading spinner while uploading */}
+          {uploading && (
+            <Box mt={2} display="flex" justifyContent="center">
+              <CircularProgress size={24} />
+            </Box>
+          )}
 
           <Box mt={3} display="flex" justifyContent="flex-end">
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" disabled={uploading}>
               Save
             </Button>
           </Box>
