@@ -3,7 +3,11 @@
 > A modern platform for photographers to share skills, learn techniques, and connect with the global photography community.
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ![ShutterSync](https://img.shields.io/badge/ShutterSync-1.0.0-brightgreen)
+=======
+![ShutterSync](https://github.com/anuradhajayathunga/paf-frontend/blob/oauth2-branch/signup.png)
+>>>>>>> Stashed changes
 =======
 ![ShutterSync](https://github.com/anuradhajayathunga/paf-frontend/blob/oauth2-branch/signup.png)
 >>>>>>> Stashed changes
@@ -132,7 +136,11 @@ Have questions or want to contribute? Reach out to us:
 <p align="center">
   Made with ❤️ by the ShutterSync Team
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 </p>
+=======
+</p>
+>>>>>>> Stashed changes
 =======
 </p>
 >>>>>>> Stashed changes
